@@ -2,7 +2,7 @@
 
 Version 0.1.0
 
-A set of metrics to assess the influence of Climate Change on the energy system. 
+A set of metrics to assess the influence of Climate Change on the energy system. If you want to add a metrics, please feel free to contact me. 
 
 
 ## Project organization
