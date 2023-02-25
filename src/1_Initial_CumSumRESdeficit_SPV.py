@@ -62,7 +62,7 @@ ds_clim = ds.groupby(modified_ordinal_day).mean('time')
 # for not leap years we get the information
 not_leap_year = xr.DataArray(~ds.indexes['time'].is_leap_year, coords=ds.coords)
 march_or_later = ds.time.dt.month >= 3
-ordinal_day = ds.time.dt.dayofyear * 24 + ds.time.dt.hour
+ordinal_day = ds.time.dt.dayofyear * 24 + ds.time.dt.hour - 24
 modified_ordinal_day = ordinal_day + (not_leap_year & march_or_later)
 modified_ordinal_day = modified_ordinal_day.rename('Modified Hour of the Year')
 
