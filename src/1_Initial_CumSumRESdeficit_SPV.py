@@ -45,11 +45,11 @@ not_leap_year = xr.DataArray(~ds.indexes['time'].is_leap_year, coords=ds.coords)
 march_or_later = ds.time.dt.month >= 3
 ordinal_day = ds.time.dt.dayofyear
 modified_ordinal_day = ordinal_day + (not_leap_year & march_or_later)
-modified_ordinal_day = modified_ordinal_day.rename('modified_ordinal_day')
+modified_ordinal_day = modified_ordinal_day.rename('Modified ordinal day')
 
 
 # we can use this new modified ordinal day definition to get the correct climatology
-ds_clim = ds.groupby(modified_ordinal_day).mean('time')
+ds_clim_day = ds.groupby(modified_ordinal_day).mean('time')
 
 #%%
 # =============================================================================
@@ -62,84 +62,40 @@ ds_clim = ds.groupby(modified_ordinal_day).mean('time')
 # for not leap years we get the information
 not_leap_year = xr.DataArray(~ds.indexes['time'].is_leap_year, coords=ds.coords)
 march_or_later = ds.time.dt.month >= 3
-ordinal_day = ds.time.dt.dayofyear * 24 + ds.time.dt.hour - 24
-modified_ordinal_day = ordinal_day + (not_leap_year & march_or_later)
-modified_ordinal_day = modified_ordinal_day.rename('Modified Hour of the Year')
+ordinal_hour = ds.time.dt.dayofyear * 24 + ds.time.dt.hour - 24
+modified_ordinal_hour = ordinal_hour + (not_leap_year & march_or_later)
+modified_ordinal_hour = modified_ordinal_hour.rename('Modified ordinal Hour of the Year')
 
 
 # we can use this new modified ordinal day definition to get the correct climatology
-ds_clim = ds.groupby(modified_ordinal_day).mean('time')
+ds_clim_hour = ds.groupby(modified_ordinal_hour).mean('time')
 
 
 
 
-#%%
-# =============================================================================
-# Basic anomaly calculation
-# =============================================================================
-
-# determine the anomaly
-ds_anom = ds_clim - ds.groupby(modified_ordinal_day)
-
-# Show the anomaly for a few zones
-ds_anom_diff_NLES = ds_anom.NL01 - ds_anom.ES01
-
-# Prep a figure
-fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(14,6), sharey=True)
-
-# first subplot we set the NL zones
-ds_anom.NL01.cumsum().plot(ax=axes[0])
-ds_anom.NL02.cumsum().plot(ax=axes[0])
-ds_anom.NL03.cumsum().plot(ax=axes[0])
-ds_anom.NL04.cumsum().plot(ax=axes[0])
-
-# second subplot we set the ES zones
-ds_anom.ES01.cumsum().plot(ax=axes[1])
-ds_anom.ES02.cumsum().plot(ax=axes[1])
-ds_anom.ES03.cumsum().plot(ax=axes[1])
-ds_anom.ES04.cumsum().plot(ax=axes[1])
-ds_anom.ES05.cumsum().plot(ax=axes[1])
-ds_anom.ES06.cumsum().plot(ax=axes[1])
-ds_anom.ES07.cumsum().plot(ax=axes[1])
-ds_anom.ES08.cumsum().plot(ax=axes[1])
-ds_anom.ES09.cumsum().plot(ax=axes[1])
-ds_anom.ES10.cumsum().plot(ax=axes[1])
-ds_anom.ES11.cumsum().plot(ax=axes[1])
-ds_anom.ES12.cumsum().plot(ax=axes[1])
-
-# third plot we set the diff between the zones
-ds_anom_diff_NLES.cumsum().plot(ax=axes[2])
-
-
-# set the labels & titles of the subplots
-axes[0].set_title('NL zones')
-axes[1].set_title('ES zones')
-axes[2].set_title('NL01-ES01')
-
-axes[0].set_ylabel('Cummalative sum of RES-potential deficit')
-axes[1].set_ylabel('')
-
-# make it look better
-plt.tight_layout()
-fig.suptitle('Cumsum for selected regions', fontsize=16, y=1.02)
-
-plt.savefig(FOLDER_project+'results/figures/fig_cumsum_NLES_SPV.png')
-
-plt.show()
 
 #%%
 # =============================================================================
 # Now we do a slow moving climatology calculation
 # =============================================================================
 
+
+# determine the anomaly
+ds_anom_day = ds_clim_day - ds.groupby(modified_ordinal_day)
+ds_anom_hour = ds_clim_hour - ds.groupby(modified_ordinal_hour)
+
 # for a dutch zone, we take the rolling centroid meand of 10 days (240 hours)
 dsr_nl01 = ds.NL01.rolling(time=1008,center=True).mean()
+
+dsr_nl01 = ds_anom_hour.groupby(ds_anom_hour.time.dt.hour).rolling(time=1008,center=True).mean()
+
 
 # from the multi-day rolling mean we calculate the climatology
 dsr_nl01_clim = dsr_nl01.groupby(modified_ordinal_day).mean('time')
 
+
 # To get the anomaly w.r.t climatology
-dsr_nl01_anom = dsr_nl01_clim - dsr_nl01.groupby(modified_ordinal_day)
+# dsr_nl01_anom = dsr_nl01_clim - dsr_nl01.groupby(modified_ordinal_day)
 ds_nl01_anom = dsr_nl01_clim - ds.NL01.groupby(modified_ordinal_day)
 
 
@@ -147,14 +103,15 @@ ds_nl01_anom = dsr_nl01_clim - ds.NL01.groupby(modified_ordinal_day)
 fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(12,6))
 
 # first subplot is the climatology
-ds_clim.NL01.plot(ax=axes[0],label='Daily climatology')
+ds_clim_hour.NL01.plot(ax=axes[0],label='Hourly climatology')
+ds_clim_day.NL01.plot(ax=axes[0],label='Daily climatology')
 dsr_nl01_clim.plot(ax=axes[0],label='Rolling climatology')
 
 
 # second subplot is the difference in cumalative sum
-ds_anom.NL01.cumsum().plot(ax=axes[1], label='Daily climatology')
+ds_anom_day.NL01.cumsum().plot(ax=axes[1], label='Daily climatology')
 ds_nl01_anom.cumsum().plot(ax=axes[1], label= 'Rolling climatology')
-dsr_nl01_anom.cumsum().plot(ax=axes[1], label='Rolling climatology, rolling data')
+ds_anom_hour.NL01.cumsum().plot(ax=axes[1], label='Hourly climatology')
 
 # set the legend, labels & titles of the subplots
 axes[0].legend()
@@ -168,8 +125,9 @@ axes[1].set_ylabel('Cumalative sum of RES-potential deficit')
 
 # make it look better
 plt.tight_layout()
+# axes[0].set_xlim(2300,2350)
 
-plt.savefig(FOLDER_project+'results/figures/fig_climatology_SPV.png')
+plt.savefig(FOLDER_project+'results/figures/fig_climatology_SPVv2.png')
 
 plt.show()
 
