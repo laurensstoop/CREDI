@@ -197,6 +197,63 @@ plt.savefig(FOLDER_project+'results/figures/Fig_ClimatologyComparison_WON.png')
 
 plt.show()
 
+
+
+
+#%%
+# =============================================================================
+# Final choice
+# =============================================================================
+
+# we start a new figure
+fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(14,6), sharey=True)
+
+# selected hours
+ds_Clim.Hourly[8:8760:24].plot(ax=axes[0], alpha=0.5, color='dodgerblue',linestyle='dashed')
+ds_Clim.Hourly[12:8760:24].plot(ax=axes[0], label='Hourly climatology', alpha=0.5, color='dodgerblue')
+ds_Clim.RolHour42[8:8760:24].plot(ax=axes[0],  color='black',linestyle='dashed')
+ds_Clim.RolHour42[12:8760:24].plot(ax=axes[0], label='Rolling  Hourly 42', color='black')
+
+# All hours
+ds_Clim.Hourly[0:8760:24].plot(ax=axes[1], alpha=0.5, color='dodgerblue')
+ds_Clim.Hourly[2:8760:24].plot(ax=axes[1], alpha=0.5, color='dodgerblue')
+ds_Clim.Hourly[4:8760:24].plot(ax=axes[1], alpha=0.5, color='dodgerblue')
+ds_Clim.Hourly[6:8760:24].plot(ax=axes[1], alpha=0.5, color='dodgerblue')
+ds_Clim.Hourly[8:8760:24].plot(ax=axes[1], alpha=0.5, color='dodgerblue')
+ds_Clim.Hourly[10:8760:24].plot(ax=axes[1], alpha=0.5, color='dodgerblue')
+ds_Clim.Hourly[12:8760:24].plot(ax=axes[1], label='Hourly climatology', alpha=0.5, color='dodgerblue')
+ds_Clim.RolHour42[0:8760:24].plot(ax=axes[1],  color='black')
+ds_Clim.RolHour42[2:8760:24].plot(ax=axes[1],  color='black')
+ds_Clim.RolHour42[4:8760:24].plot(ax=axes[1],  color='black')
+ds_Clim.RolHour42[6:8760:24].plot(ax=axes[1],  color='black')
+ds_Clim.RolHour42[8:8760:24].plot(ax=axes[1],  color='black')
+ds_Clim.RolHour42[10:8760:24].plot(ax=axes[1],  color='black')
+ds_Clim.RolHour42[12:8760:24].plot(ax=axes[1], label='Rolling  Hourly 42', color='black')
+
+
+# limited period
+for year in np.arange(start=1980,stop=2021):
+    axes[2].plot(ds.NL01.sel(time=slice(str(year)+'-01-01', str(year)+'-12-31')), color='yellow', alpha=0.1)    
+ds_Clim.Hourly.plot(ax=axes[2], label='Hourly climatology', alpha=0.5, color='dodgerblue')
+ds_Clim.RolHour42.plot(ax=axes[2], label='Rolling  Hourly 42', color='black')
+    
+axes[2].set_xlim(4200,4400)
+
+# set the legend and labels
+axes[0].legend(loc='upper right', fontsize='medium')
+
+
+axes[0].set_ylabel('Climatology of RES-potential')
+axes[1].set_ylabel('')
+axes[2].set_ylabel('')
+
+# make it look better
+plt.tight_layout()
+
+plt.savefig(FOLDER_project+'results/figures/Fig_ClimatologyChoice_WON.png')
+
+plt.show()
+
 # #%%
 # # =============================================================================
 # # Now we do a yearly running sum of cumsum of capacity factor

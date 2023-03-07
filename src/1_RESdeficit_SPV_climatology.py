@@ -2,7 +2,7 @@
 """
 Spyder Editor
 
-Created on 2023-02-01
+Created on 2023-03-02
 
 @author: Laurens P. Stoop
 """
@@ -127,7 +127,7 @@ ds_Clim['HourHarm750']  = xr.DataArray(np.real(resFunc.inverse_fourier_transform
 
 #%%
 # =============================================================================
-# Now we do a slow moving climatology calculation
+# Now we do a comparison of climatology
 # =============================================================================
 
 
@@ -149,7 +149,7 @@ ds_Clim.RolClim42.plot(ax=axes[0,1],label='Rolling climatology [42 d]', color='b
 ds_Clim.RolClim60.plot(ax=axes[0,1],label='Rolling climatology [60 d]')
 ds_Clim.RolClim90.plot(ax=axes[0,1],label='Rolling climatology [90 d]')
 
-# Comparison of Harmonics
+# Comparison of rolling hours
 ds_Clim.Hourly[8:8760:24].plot(ax=axes[1,0], alpha=0.5, color='dodgerblue')
 ds_Clim.Hourly[13:8760:24].plot(ax=axes[1,0], label='Hourly climatology', alpha=0.5, color='dodgerblue')
 ds_Clim.RolHour42[8:8760:24].plot(ax=axes[1,0],  color='black')
@@ -189,5 +189,62 @@ axes[1,1].set_ylabel('')
 plt.tight_layout()
 
 plt.savefig(FOLDER_project+'results/figures/Fig_ClimatologyComparison_SPV.png')
+
+plt.show()
+
+
+#%%
+# =============================================================================
+# Final choice
+# =============================================================================
+
+# we start a new figure
+fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(14,6), sharey=True)
+
+# selected hours
+ds_Clim.Hourly[8:8760:24].plot(ax=axes[0], alpha=0.5, color='dodgerblue')
+ds_Clim.Hourly[13:8760:24].plot(ax=axes[0], label='Hourly climatology', alpha=0.5, color='dodgerblue')
+ds_Clim.RolHour42[8:8760:24].plot(ax=axes[0],  color='black')
+ds_Clim.RolHour42[13:8760:24].plot(ax=axes[0], label='Rolling  Hourly 42', color='black')
+
+# All hours
+ds_Clim.Hourly[6:8760:24].plot(ax=axes[1], alpha=0.5, color='dodgerblue')
+ds_Clim.Hourly[7:8760:24].plot(ax=axes[1], alpha=0.5, color='dodgerblue')
+ds_Clim.Hourly[8:8760:24].plot(ax=axes[1], alpha=0.5, color='dodgerblue')
+ds_Clim.Hourly[9:8760:24].plot(ax=axes[1], alpha=0.5, color='dodgerblue')
+ds_Clim.Hourly[10:8760:24].plot(ax=axes[1], alpha=0.5, color='dodgerblue')
+ds_Clim.Hourly[11:8760:24].plot(ax=axes[1], alpha=0.5, color='dodgerblue')
+ds_Clim.Hourly[12:8760:24].plot(ax=axes[1], alpha=0.5, color='dodgerblue')
+ds_Clim.Hourly[13:8760:24].plot(ax=axes[1], label='Hourly climatology', alpha=0.5, color='dodgerblue')
+ds_Clim.RolHour42[6:8760:24].plot(ax=axes[1],  color='black')
+ds_Clim.RolHour42[7:8760:24].plot(ax=axes[1],  color='black')
+ds_Clim.RolHour42[8:8760:24].plot(ax=axes[1],  color='black')
+ds_Clim.RolHour42[9:8760:24].plot(ax=axes[1],  color='black')
+ds_Clim.RolHour42[10:8760:24].plot(ax=axes[1],  color='black')
+ds_Clim.RolHour42[11:8760:24].plot(ax=axes[1],  color='black')
+ds_Clim.RolHour42[12:8760:24].plot(ax=axes[1],  color='black')
+ds_Clim.RolHour42[13:8760:24].plot(ax=axes[1], label='Rolling  Hourly 42', color='black')
+
+
+
+for year in np.arange(start=1980,stop=2021):
+    axes[2].plot(ds.NL01.sel(time=slice(str(year)+'-01-01', str(year)+'-12-31')), color='yellow', alpha=0.1)
+ds_Clim.Hourly.plot(ax=axes[2], label='Hourly climatology', alpha=0.5, color='dodgerblue')
+ds_Clim.RolHour42.plot(ax=axes[2], label='Rolling  Hourly 42', linestyle='dashed', color='black')
+
+axes[2].set_xlim(1200,1600)
+
+# set the legend and labels
+axes[0].legend(loc='upper right', fontsize='medium')
+
+
+axes[0].set_ylabel('Climatology of RES-potential')
+axes[1].set_ylabel('')
+axes[2].set_ylabel('')
+
+# make it look better
+plt.tight_layout()
+
+plt.savefig(FOLDER_project+'results/figures/Fig_ClimatologyChoice_SPV.png')
 
 plt.show()
