@@ -13,11 +13,18 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 import xarray as xr
+import sys
 from datetime import datetime
+
+# The scripts
+sys.path.append('/Users/3986209/Library/CloudStorage/OneDrive-UniversiteitUtrecht/Projects/ccmetrics/src/')
+import RESdeficitFunctions as resFunc
 
 
 #%%
-
+# =============================================================================
+# Define file locations
+# =============================================================================
 
 # Define some folders
 FOLDER_project='/Users/3986209/Library/CloudStorage/OneDrive-UniversiteitUtrecht/Projects/ccmetrics/'
@@ -28,6 +35,11 @@ FOLDER_hist = FOLDER_pecd+'HIST/ENER/'
 fileName= 'WON/PEON/H_ERA5_ECMW_T639_WON_NA---_Pecd_PEON_S198001010000_E202112312300_CFR_TIM_01h_NA-_noc_org_30_NA---_NA---_PhM01.csv'
 
 
+#%%
+# =============================================================================
+# Get the data to open
+# =============================================================================
+
 # Open the file and set the index as the date
 df = pd.read_csv(FOLDER_hist+fileName, header=52, parse_dates=True, index_col='Date')
 df.index = df.index.rename('time')
@@ -35,21 +47,11 @@ ds = df.to_xarray()
 
 #%%
 # =============================================================================
-# Getting the right climatology
+# Functional definition call of climatology
 # =============================================================================
 
-# we want a function of in which the 29t of february is counted correctly
+ds_clim, MOD = resFunc.Climatology_MOD(ds, 'NL01')
 
-# for not leap years we get the information
-not_leap_year = xr.DataArray(~ds.indexes['time'].is_leap_year, coords=ds.coords)
-march_or_later = ds.time.dt.month >= 3
-ordinal_day = ds.time.dt.dayofyear
-modified_ordinal_day = ordinal_day + (not_leap_year & march_or_later)
-modified_ordinal_day = modified_ordinal_day.rename('modified_ordinal_day')
-
-
-# we can use this new modified ordinal day definition to get the correct climatology
-ds_clim = ds.groupby(modified_ordinal_day).mean('time')
   
 #%%
 # =============================================================================
@@ -57,7 +59,7 @@ ds_clim = ds.groupby(modified_ordinal_day).mean('time')
 # =============================================================================
 
 # determine the anomaly
-ds_anom = ds_clim - ds.groupby(modified_ordinal_day)
+ds_anom = ds_clim - ds.groupby(MOD)
 
 # Show the anomaly for a few zones
 ds_anom_diff_NLES = ds_anom.NL01 - ds_anom.ES01
@@ -114,11 +116,11 @@ plt.show()
 dsr_nl01 = ds.NL01.rolling(time=1008,center=True).mean()
 
 # from the multi-day rolling mean we calculate the climatology
-dsr_nl01_clim = dsr_nl01.groupby(modified_ordinal_day).mean('time')
+dsr_nl01_clim = dsr_nl01.groupby(MOD).mean('time')
 
 # To get the anomaly w.r.t climatology
-dsr_nl01_anom = dsr_nl01_clim - dsr_nl01.groupby(modified_ordinal_day)
-ds_nl01_anom = dsr_nl01_clim - ds.NL01.groupby(modified_ordinal_day)
+dsr_nl01_anom = dsr_nl01_clim - dsr_nl01.groupby(MOD)
+ds_nl01_anom = dsr_nl01_clim - ds.NL01.groupby(MOD)
 
 
 # we start a new figure
