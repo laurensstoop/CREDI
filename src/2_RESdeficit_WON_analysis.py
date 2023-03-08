@@ -93,11 +93,10 @@ ds_AnomdiffH = ds_AnomRolHourly.cumsum() - ds_AnomHourly.cumsum()
 
 
 # we start a new figure
-fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(16,6))
+fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(14,6))
 
 # first subplot is the climatology
 ds_AnomRolHourly.cumsum().plot(ax=axes[0], label='Rolling Hourly', color='black')
-# ds_AnomRolHourly.groupby(ds_AnomRolHourly.time.dt.year).cumsum().plot(ax=axes[0], label='Yearly Cumalative Sum', color='black')
 
 
 # second subplot is the difference in cumalative sum
@@ -105,10 +104,6 @@ ds_AnomDaily.cumsum().plot(ax=axes[1], label='Daily', color='blue')
 ds_AnomHourly.cumsum().plot(ax=axes[1], label= 'Hourly', color='orange')
 ds_AnomRolHourly.cumsum().plot(ax=axes[1], label='Rolling Hourly', color='black')
 ds_AnomRolDaily.cumsum().plot(ax=axes[1], label='Rolling Daily', color='purple')
-
-ds_AnomdiffD.plot(ax=axes[2], label='RolH - Daily', color='blue')
-ds_AnomdiffRD.plot(ax=axes[2], label='RolH - RolDaily', color='purple')
-ds_AnomdiffH.plot(ax=axes[2], label='RolH - Hourly', color='orange')
 
 # set the legend, labels & titles of the subplots
 axes[1].legend(fontsize='medium')
@@ -160,7 +155,7 @@ axes[0].fill_between(
 axes[0].plot(ds_AnomRolHourly.groupby(ds_AnomRolHourly.time.dt.year).cumsum().groupby('OrdinalHour').quantile(0.5, method='closest_observation'), color='dodgerblue', label='50%')
 
 #EXPERIMENTAL 
-axes[1].plot([ds_AnomRolHourly.OrdinalHour,ds_AnomRolHourly.groupby(ds_AnomRolHourly.time.dt.year).cumsum()])
+# axes[1].plot([ds_AnomRolHourly.OrdinalHour,ds_AnomRolHourly.groupby(ds_AnomRolHourly.time.dt.year).cumsum()])
 
 # set the legend, labels & titles of the subplots
 axes[0].legend(fontsize='medium')
