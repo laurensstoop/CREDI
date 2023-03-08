@@ -125,6 +125,11 @@ plt.show()
 # Now we do a yearly running sum of cumsum of capacity factor
 # =============================================================================
 
+# First we define the yearly cumsum
+da_YCS = ds_AnomRolHourly.groupby(ds_AnomRolHourly.time.dt.year).cumsum()
+
+
+#%%
 
 # ds_AnomRolHourly.groupby(ds_AnomRolHourly.time.dt.year).cumsum().plot()
 # ds_AnomRolHourly.groupby(ds_AnomRolHourly.time.dt.year).cumsum().groupby('OrdinalHour').quantile(0.1, method='closest_observation').plot()
@@ -133,131 +138,139 @@ fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(16,6), sharey=True)
 
 axes[0].fill_between(
     ds_Clim.OrdinalHour, 
-    ds_AnomRolHourly.groupby(ds_AnomRolHourly.time.dt.year).cumsum().groupby('OrdinalHour').quantile(0, method='closest_observation'),
-    ds_AnomRolHourly.groupby(ds_AnomRolHourly.time.dt.year).cumsum().groupby('OrdinalHour').quantile(1, method='closest_observation'),
+    da_YCS.groupby('OrdinalHour').quantile(0, method='closest_observation'),
+    da_YCS.groupby('OrdinalHour').quantile(1, method='closest_observation'),
     color='dodgerblue', alpha=0.1, label='min-max'
     )
 
 axes[0].fill_between(
     ds_Clim.OrdinalHour, 
-    ds_AnomRolHourly.groupby(ds_AnomRolHourly.time.dt.year).cumsum().groupby('OrdinalHour').quantile(0.1, method='closest_observation'),
-    ds_AnomRolHourly.groupby(ds_AnomRolHourly.time.dt.year).cumsum().groupby('OrdinalHour').quantile(0.9, method='closest_observation'),
+    da_YCS.groupby('OrdinalHour').quantile(0.1, method='closest_observation'),
+    da_YCS.groupby('OrdinalHour').quantile(0.9, method='closest_observation'),
     color='dodgerblue', alpha=0.2, label='10-90%'
     )
 
 axes[0].fill_between(
     ds_Clim.OrdinalHour, 
-    ds_AnomRolHourly.groupby(ds_AnomRolHourly.time.dt.year).cumsum().groupby('OrdinalHour').quantile(0.25, method='closest_observation'),
-    ds_AnomRolHourly.groupby(ds_AnomRolHourly.time.dt.year).cumsum().groupby('OrdinalHour').quantile(0.75, method='closest_observation'),
+    da_YCS.groupby('OrdinalHour').quantile(0.25, method='closest_observation'),
+    da_YCS.groupby('OrdinalHour').quantile(0.75, method='closest_observation'),
     color='dodgerblue', alpha=0.4, label='25-75%'
     )
 
-axes[0].plot(ds_AnomRolHourly.groupby(ds_AnomRolHourly.time.dt.year).cumsum().groupby('OrdinalHour').quantile(0.5, method='closest_observation'), color='dodgerblue', label='50%')
+axes[0].plot(da_YCS.groupby('OrdinalHour').quantile(0.5, method='closest_observation'), color='dodgerblue', label='50%')
 
 #EXPERIMENTAL 
-# axes[1].plot([ds_AnomRolHourly.OrdinalHour,ds_AnomRolHourly.groupby(ds_AnomRolHourly.time.dt.year).cumsum()])
+# axes[1].plot(ds_AnomHourly.OrdinalHour.sel(time='1990'),ds_AnomHourly.sel(time='1990').cumsum().values, color='red')
+# axes[1].plot(ds_AnomHourly.OrdinalHour.sel(time='1995'),ds_AnomHourly.sel(time='1995').cumsum().values, color='green')
+axes[1].plot(ds_AnomHourly.OrdinalHour.sel(time='2003'),ds_AnomHourly.sel(time='2003').cumsum().values, color='red', label='2003')
+axes[1].plot(ds_AnomHourly.OrdinalHour.sel(time='2010'),ds_AnomHourly.sel(time='2010').cumsum().values, color='purple', label='2010')
+
+axes[1].fill_between(
+    ds_Clim.OrdinalHour, 
+    da_YCS.groupby('OrdinalHour').quantile(0.1, method='closest_observation'),
+    da_YCS.groupby('OrdinalHour').quantile(0.9, method='closest_observation'),
+    color='dodgerblue', alpha=0.2, label='10-90%'
+    )
+
+axes[1].fill_between(
+    ds_Clim.OrdinalHour, 
+    da_YCS.groupby('OrdinalHour').quantile(0.25, method='closest_observation'),
+    da_YCS.groupby('OrdinalHour').quantile(0.75, method='closest_observation'),
+    color='dodgerblue', alpha=0.4, label='25-75%'
+    )
+
+axes[1].plot(da_YCS.groupby('OrdinalHour').quantile(0.5, method='closest_observation'), color='dodgerblue', label='50%')
+
 
 # set the legend, labels & titles of the subplots
 axes[0].legend(fontsize='medium')
+axes[1].legend(fontsize='medium')
 
-axes[0].set_ylabel('Cumalative sum of RES-potential anomaly')
-
-# axes[0].set_ylim(-275,1450)
+axes[0].set_ylabel('Cumalative sum of WON-potential anomaly')
+axes[0].set_ylim(-450,450)
 
 # make it look better
 plt.tight_layout()
 
-plt.savefig(FOLDER_project+'results/figures/Fig_CUMSUM_Yearly_Distribution_WON.png')
+plt.savefig(FOLDER_project+'results/figures/Fig_CUMSUM_Yearly_Distribution_WON_initialv2.png')
 
 plt.show()
 
 
 
-# # #%%
-# # =============================================================================
-# # Now we do a yearly running sum of cumsum of capacity factor
-# # =============================================================================
 
 
-# # now for a different approach
-# fig = plt.figure(constrained_layout=True, figsize=(16,12))#, sharey=True)
+#%%
+# =============================================================================
+# Start point determination
+# =============================================================================
 
 
-# # make a colorrange
-# color = plt.cm.RdBu_r(np.linspace(0, 1, 41))
+# First we define the yearly cumsum
+da_YCS_jan = ds_AnomRolHourly.groupby(ds_AnomRolHourly.time.dt.year).cumsum()
+da_YCS_feb = ds_AnomRolHourly.shift(time=744).groupby(ds_AnomRolHourly.time.dt.year).cumsum()
+da_YCS_mar = ds_AnomRolHourly.shift(time=1440).groupby(ds_AnomRolHourly.time.dt.year).cumsum()
+da_YCS_apr = ds_AnomRolHourly.shift(time=2184).groupby(ds_AnomRolHourly.time.dt.year).cumsum()
+da_YCS_may = ds_AnomRolHourly.shift(time=2904).groupby(ds_AnomRolHourly.time.dt.year).cumsum()
+da_YCS_jun = ds_AnomRolHourly.shift(time=3648).groupby(ds_AnomRolHourly.time.dt.year).cumsum()
+da_YCS_jul = ds_AnomRolHourly.shift(time=4368).groupby(ds_AnomRolHourly.time.dt.year).cumsum()
+da_YCS_aug = ds_AnomRolHourly.shift(time=5112).groupby(ds_AnomRolHourly.time.dt.year).cumsum()
+da_YCS_sep = ds_AnomRolHourly.shift(time=5856).groupby(ds_AnomRolHourly.time.dt.year).cumsum()
+da_YCS_okt = ds_AnomRolHourly.shift(time=6576).groupby(ds_AnomRolHourly.time.dt.year).cumsum()
+da_YCS_nov = ds_AnomRolHourly.shift(time=7320).groupby(ds_AnomRolHourly.time.dt.year).cumsum()
+da_YCS_dec = ds_AnomRolHourly.shift(time=8040).groupby(ds_AnomRolHourly.time.dt.year).cumsum()
 
-# # Rearrange the subplots so we have 1 big and 1 small graph
-# gs = plt.GridSpec(nrows=2,ncols=3, figure=fig)
-# ax1 = fig.add_subplot(gs[0,0])
-# ax2 = fig.add_subplot(gs[0,1:3])
-# ax3 = fig.add_subplot(gs[1,0:3])
 
-# for year, c in zip(np.arange(start=1980,stop=2021), color):
+#%%
+
+for DA, SeasonName in zip([da_YCS_jan , da_YCS_feb, da_YCS_mar, da_YCS_apr, 
+            da_YCS_may, da_YCS_jun, da_YCS_jul, da_YCS_aug, 
+            da_YCS_sep, da_YCS_okt, da_YCS_nov, da_YCS_dec],
+            ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec' ]):
+
+    fig = plt.figure(figsize=(8,6))#, sharey=True)
+
+    plt.fill_between(
+        ds_Clim.OrdinalHour, 
+        DA.groupby('OrdinalHour').quantile(0, method='closest_observation'),
+        DA.groupby('OrdinalHour').quantile(1, method='closest_observation'),
+        color='dodgerblue', alpha=0.1, label='min-max'
+        )
     
-#     ax1.plot(dsr_nl01_anom.sel(time=slice(str(year)+'-05-01', str(year+1)+'-04-30')).cumsum(), c=c, linewidth=1)
-#     ax2.plot(dsr_nl01_anom.sel(time=slice(str(year)+'-05-01', str(year+2)+'-04-30')).cumsum(), c=c, linewidth=1)
-#     ax3.plot(dsr_nl01_anom.sel(time=slice(str(year)+'-05-01', str(year+3)+'-04-30')).cumsum(), c=c, linewidth=1)
-
-# # set the legend, labels & titles of the subplots
-# ax1.set_title('One year')
-# ax2.set_title('Two year')
-# ax3.set_title('Three years')
-
-# ax1.set_ylim([-600,600])
-# ax2.set_ylim([-600,600])
-# ax3.set_ylim([-600,600])
-
-# ax1.set_ylabel('Cumsum of RES deficit')
-# ax3.set_ylabel('Cumsum of RES deficit')
-
-# sm = plt.cm.ScalarMappable(cmap=plt.cm.RdBu_r, norm=plt.Normalize(vmin=1980, vmax=2021))
-# fig.colorbar(sm, ax=ax3, location='bottom')
-
-# # # make it loog better
-# # plt.tight_layout()
-
-
-# if ROLLING is True: 
-#     plt.savefig(FOLDER_project+'results/figures/fig_multiyear_Cumsum.png')
-# elif ROLLING is False:
-#     plt.savefig(FOLDER_project+'results/figures/fig_multiyear_Cumsum_rolling.png')
-
-
-# #%%
-
-# fig, axes = plt.subplots(nrows=2, ncols=2, figsize=(17,12), sharey=True)
-
-# # make a colorrange
-# color = plt.cm.RdBu_r(np.linspace(0, 1, 41))
-
-# for year, c in zip(np.arange(start=1980,stop=2021), color):
+    plt.fill_between(
+        ds_Clim.OrdinalHour, 
+        DA.groupby('OrdinalHour').quantile(0.1, method='closest_observation'),
+        DA.groupby('OrdinalHour').quantile(0.9, method='closest_observation'),
+        color='dodgerblue', alpha=0.2, label='10-90%'
+        )
     
-#     axes[0,0].plot(dsr_nl01_anom.sel(time=slice(str(year)+'-01-01', str(year)+'-12-31')).cumsum(), c=c, linewidth=1)
-#     axes[0,1].plot(dsr_nl01_anom.sel(time=slice(str(year)+'-05-01', str(year+1)+'-04-30')).cumsum(), c=c, linewidth=1)
-#     axes[1,0].plot(dsr_nl01_anom.sel(time=slice(str(year)+'-09-01', str(year+1)+'-04-30')).cumsum(), c=c, linewidth=1)
-#     axes[1,1].plot(dsr_nl01_anom.sel(time=slice(str(year)+'-10-01', str(year+1)+'-04-30')).cumsum(), c=c, linewidth=1)
+    plt.fill_between(
+        ds_Clim.OrdinalHour, 
+        DA.groupby('OrdinalHour').quantile(0.25, method='closest_observation'),
+        DA.groupby('OrdinalHour').quantile(0.75, method='closest_observation'),
+        color='dodgerblue', alpha=0.4, label='25-75%'
+        )
+    
+    plt.plot(DA.groupby('OrdinalHour').quantile(0.5, method='closest_observation'), color='dodgerblue', label='50%')
 
-# # set the legend, labels & titles of the subplots
-# axes[0,0].set_title('January Start')
-# axes[0,1].set_title('May Start')
-# # axes[0,2].set_title('March Start')
-# axes[1,0].set_title('Sept Start')
-# axes[1,1].set_title('Okt Start')
-# # axes[1,2].set_title('June Start')
+    
+    
+    plt.ylabel('Cummalative sum of RES-potential deficit')
+    plt.title(SeasonName)
+    
+    plt.legend(fontsize='medium')
 
-# axes[0,0].set_ylabel('Cummalative sum of RES-potential deficit')
-# axes[1,0].set_ylabel('Cummalative sum of RES-potential deficit')
+    plt.ylim(-450,450)
 
-# sm = plt.cm.ScalarMappable(cmap=plt.cm.RdBu_r, norm=plt.Normalize(vmin=1980, vmax=2021))
-# fig.colorbar(sm, ax=axes.ravel().tolist())
-# # make it loog better
-# # plt.tight_layout()
+    # make it look better
+    plt.tight_layout()
+
+    plt.savefig(FOLDER_project+'results/figures/Fig_CUMSUM_YearStart_'+SeasonName+'.png')
+
+    plt.show()
 
 
 
-# if ROLLING is True: 
-#     plt.savefig(FOLDER_project+'results/figures/fig_yearlyCumsum_startdatev2.png')
-# elif ROLLING is False:
-#     plt.savefig(FOLDER_project+'results/figures/fig_yearlyCumsum_startdatev2_rolling.png')
-# #%%
-# # df_clim = df.groupby(cum_data.index.dayofyear).mean()
+
+
+
