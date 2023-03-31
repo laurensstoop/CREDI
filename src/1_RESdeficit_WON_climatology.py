@@ -18,7 +18,7 @@ from datetime import datetime
 
 # The scripts
 sys.path.append('/Users/3986209/Library/CloudStorage/OneDrive-UniversiteitUtrecht/Projects/ccmetrics/src/')
-import RESdeficitFunctions as resFunc
+import CREBfunctions as creb
 
 
 #%%
@@ -68,20 +68,20 @@ ds = df.to_xarray()
 ds_Clim = xr.Dataset()
 
 # determine climatology
-ds_Clim['Daily'], MOD = resFunc.Climatology_MOD(ds, 'NL01')
-ds_Clim['RolClim10'], MOD = resFunc.Climatology_MOD_Rolling(ds, 'NL01', RollingWindow=240)
-ds_Clim['RolClim20'], MOD = resFunc.Climatology_MOD_Rolling(ds, 'NL01', RollingWindow=480)
-ds_Clim['RolClim30'], MOD = resFunc.Climatology_MOD_Rolling(ds, 'NL01', RollingWindow=960)
-ds_Clim['RolClim42'], MOD = resFunc.Climatology_MOD_Rolling(ds, 'NL01', RollingWindow=1008)
-ds_Clim['RolClim60'], MOD = resFunc.Climatology_MOD_Rolling(ds, 'NL01', RollingWindow=1920)
-ds_Clim['RolClim90'], MOD = resFunc.Climatology_MOD_Rolling(ds, 'NL01', RollingWindow=2880)
+ds_Clim['Daily'], MOD = creb.Climatology_MOD(ds, 'NL01')
+ds_Clim['RolClim10'], MOD = creb.Climatology_MOD_Rolling(ds, 'NL01', RollingWindow=240)
+ds_Clim['RolClim20'], MOD = creb.Climatology_MOD_Rolling(ds, 'NL01', RollingWindow=480)
+ds_Clim['RolClim30'], MOD = creb.Climatology_MOD_Rolling(ds, 'NL01', RollingWindow=960)
+ds_Clim['RolClim42'], MOD = creb.Climatology_MOD_Rolling(ds, 'NL01', RollingWindow=1008)
+ds_Clim['RolClim60'], MOD = creb.Climatology_MOD_Rolling(ds, 'NL01', RollingWindow=1920)
+ds_Clim['RolClim90'], MOD = creb.Climatology_MOD_Rolling(ds, 'NL01', RollingWindow=2880)
 
 
-ds_Clim['Hourly'], MOH = resFunc.Climatology_Hourly(ds, 'NL01')
+ds_Clim['Hourly'], MOH = creb.Climatology_Hourly(ds, 'NL01')
 
-ds_Clim['RolHour20'], OH = resFunc.Climatology_Hourly_Rolling(ds, 'NL01', RollingWindow=20)
-ds_Clim['RolHour60'], OH = resFunc.Climatology_Hourly_Rolling(ds, 'NL01', RollingWindow=60)
-ds_Clim['RolHour42'], OH = resFunc.Climatology_Hourly_Rolling(ds, 'NL01', RollingWindow=42)
+ds_Clim['RolHour20'], OH = creb.Climatology_Hourly_Rolling(ds, 'NL01', RollingWindow=20)
+ds_Clim['RolHour60'], OH = creb.Climatology_Hourly_Rolling(ds, 'NL01', RollingWindow=60)
+ds_Clim['RolHour42'], OH = creb.Climatology_Hourly_Rolling(ds, 'NL01', RollingWindow=42)
 
 
 
@@ -98,12 +98,12 @@ ds_Clim['RolHour42'], OH = resFunc.Climatology_Hourly_Rolling(ds, 'NL01', Rollin
 # =============================================================================
 
 # Determin Fourier T
-fft_D, freq_D = resFunc.fourier_transform(ds_Clim.Daily.values, 1/366.)
-# fft_H, freq_H = resFunc.fourier_transform(ds_Clim.Hourly.values, 1/8764.)
+fft_D, freq_D = creb.fourier_transform(ds_Clim.Daily.values, 1/366.)
+# fft_H, freq_H = creb.fourier_transform(ds_Clim.Hourly.values, 1/8764.)
 
 # Get the frequency spectrum information
-spd_D, pos_freqs_D = resFunc.spectrum(fft_D, freq_D) #, scaling='power')
-# spd_H, pos_freqs_H = resFunc.spectrum(fft_H, freq_H) #, scaling='power')
+spd_D, pos_freqs_D = creb.spectrum(fft_D, freq_D) #, scaling='power')
+# spd_H, pos_freqs_H = creb.spectrum(fft_H, freq_H) #, scaling='power')
 
 # quickly plot the frequency spectrum for the Daily version
 f, ax = plt.subplots(1,1)
@@ -120,16 +120,16 @@ ax.set_title('Spectral density', fontsize=16)
 # ax.set_xlim(0,1200)
 
 # Harmonics based on daily data
-ds_Clim['Harmonic1']  = xr.DataArray(np.real(resFunc.inverse_fourier_transform(fft_D, freq_D, max_freq=1)), coords={'ModifiedOrdinalDay': ds_Clim.ModifiedOrdinalDay}, dims=['ModifiedOrdinalDay'])
-ds_Clim['Harmonic3']  = xr.DataArray(np.real(resFunc.inverse_fourier_transform(fft_D, freq_D, max_freq=3)), coords={'ModifiedOrdinalDay': ds_Clim.ModifiedOrdinalDay}, dims=['ModifiedOrdinalDay'])
-ds_Clim['Harmonic5']  = xr.DataArray(np.real(resFunc.inverse_fourier_transform(fft_D, freq_D, max_freq=5)), coords={'ModifiedOrdinalDay': ds_Clim.ModifiedOrdinalDay}, dims=['ModifiedOrdinalDay'])
-ds_Clim['Harmonic10']  = xr.DataArray(np.real(resFunc.inverse_fourier_transform(fft_D, freq_D, max_freq=10)), coords={'ModifiedOrdinalDay': ds_Clim.ModifiedOrdinalDay}, dims=['ModifiedOrdinalDay'])
+ds_Clim['Harmonic1']  = xr.DataArray(np.real(creb.inverse_fourier_transform(fft_D, freq_D, max_freq=1)), coords={'ModifiedOrdinalDay': ds_Clim.ModifiedOrdinalDay}, dims=['ModifiedOrdinalDay'])
+ds_Clim['Harmonic3']  = xr.DataArray(np.real(creb.inverse_fourier_transform(fft_D, freq_D, max_freq=3)), coords={'ModifiedOrdinalDay': ds_Clim.ModifiedOrdinalDay}, dims=['ModifiedOrdinalDay'])
+ds_Clim['Harmonic5']  = xr.DataArray(np.real(creb.inverse_fourier_transform(fft_D, freq_D, max_freq=5)), coords={'ModifiedOrdinalDay': ds_Clim.ModifiedOrdinalDay}, dims=['ModifiedOrdinalDay'])
+ds_Clim['Harmonic10']  = xr.DataArray(np.real(creb.inverse_fourier_transform(fft_D, freq_D, max_freq=10)), coords={'ModifiedOrdinalDay': ds_Clim.ModifiedOrdinalDay}, dims=['ModifiedOrdinalDay'])
 
 # # Harmonics based on Houlry data
-# ds_Clim['HourHarm1']  = xr.DataArray(np.real(resFunc.inverse_fourier_transform(fft_H, freq_H, max_freq=1)), coords={'ModifiedOrdinalHour': ds_Clim.ModifiedOrdinalHour}, dims=['ModifiedOrdinalHour'])
-# ds_Clim['HourHarm3']  = xr.DataArray(np.real(resFunc.inverse_fourier_transform(fft_H, freq_H, max_freq=3)), coords={'ModifiedOrdinalHour': ds_Clim.ModifiedOrdinalHour}, dims=['ModifiedOrdinalHour'])
-# ds_Clim['HourHarm5']  = xr.DataArray(np.real(resFunc.inverse_fourier_transform(fft_H, freq_H, max_freq=5)), coords={'ModifiedOrdinalHour': ds_Clim.ModifiedOrdinalHour}, dims=['ModifiedOrdinalHour'])
-# ds_Clim['HourHarm200']  = xr.DataArray(np.real(resFunc.inverse_fourier_transform(fft_H, freq_H, max_freq=200)), coords={'ModifiedOrdinalHour': ds_Clim.ModifiedOrdinalHour}, dims=['ModifiedOrdinalHour'])
+# ds_Clim['HourHarm1']  = xr.DataArray(np.real(creb.inverse_fourier_transform(fft_H, freq_H, max_freq=1)), coords={'ModifiedOrdinalHour': ds_Clim.ModifiedOrdinalHour}, dims=['ModifiedOrdinalHour'])
+# ds_Clim['HourHarm3']  = xr.DataArray(np.real(creb.inverse_fourier_transform(fft_H, freq_H, max_freq=3)), coords={'ModifiedOrdinalHour': ds_Clim.ModifiedOrdinalHour}, dims=['ModifiedOrdinalHour'])
+# ds_Clim['HourHarm5']  = xr.DataArray(np.real(creb.inverse_fourier_transform(fft_H, freq_H, max_freq=5)), coords={'ModifiedOrdinalHour': ds_Clim.ModifiedOrdinalHour}, dims=['ModifiedOrdinalHour'])
+# ds_Clim['HourHarm200']  = xr.DataArray(np.real(creb.inverse_fourier_transform(fft_H, freq_H, max_freq=200)), coords={'ModifiedOrdinalHour': ds_Clim.ModifiedOrdinalHour}, dims=['ModifiedOrdinalHour'])
 
 
 

@@ -18,7 +18,7 @@ from datetime import datetime
 
 # The scripts
 sys.path.append('/Users/3986209/Library/CloudStorage/OneDrive-UniversiteitUtrecht/Projects/ccmetrics/src/')
-import RESdeficitFunctions as resFunc
+import CREBfunctions as creb
 
 
 #%%
@@ -68,10 +68,10 @@ ds = df.to_xarray()
 ds_Clim = xr.Dataset()
 
 # determine climatology
-ds_Clim['Daily'], MOD = resFunc.Climatology_MOD(ds, 'NL01')
-ds_Clim['Hourly'], OH = resFunc.Climatology_Hourly(ds, 'NL01')
-ds_Clim['RolDay42'], MOD = resFunc.Climatology_MOD_Rolling(ds, 'NL01', RollingWindow=1008)
-ds_Clim['RolHour42'], OH = resFunc.Climatology_Hourly_Rolling(ds, 'NL01', RollingWindow=42)
+ds_Clim['Daily'], MOD = creb.Climatology_MOD(ds, 'NL01')
+ds_Clim['Hourly'], OH = creb.Climatology_Hourly(ds, 'NL01')
+ds_Clim['RolDay42'], MOD = creb.Climatology_MOD_Rolling(ds, 'NL01', RollingWindow=1008)
+ds_Clim['RolHour42'], OH = creb.Climatology_Hourly_Rolling(ds, 'NL01', RollingWindow=42)
 
 
 
