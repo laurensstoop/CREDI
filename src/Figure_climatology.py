@@ -129,34 +129,34 @@ axes[1,0].plot(year_dates[13:8760:24], ds_ClimSPV.Hourly[13:8760:24], color='bur
 ### show the hourly clim with other climatologies  
 
 # Hourly clim, now also 08 for solar
-axes[0,1].plot(year_dates[13:8760:24], ds_ClimWON.Hourly[13:8760:24], label='Hourly climatology', color='lightslategray', alpha=1)
-axes[1,1].plot(year_dates[13:8760:24], ds_ClimSPV.Hourly[13:8760:24], label='Hourly climatology', color='burlywood', alpha=1)
-axes[1,1].plot(year_dates[8:8760:24], ds_ClimSPV.Hourly[8:8760:24], color='burlywood', alpha=1)
+axes[0,1].plot(year_dates[13:8760:24], ds_ClimWON.Hourly[13:8760:24], label='Initial climatology', color='lightslategray', alpha=1)
+axes[1,1].plot(year_dates[13:8760:24], ds_ClimSPV.Hourly[13:8760:24], label='Initial climatology', color='burlywood', alpha=1)
+# axes[1,1].plot(year_dates[8:8760:24], ds_ClimSPV.Hourly[8:8760:24], color='burlywood', alpha=1)
     
 # Rolling clim over 10 days
 axes[0,1].plot(year_dates[13:8760:24], ds_ClimWON.RolHour10[13:8760:24], label='Rolling hourly 10', color='cornflowerblue', alpha=0.3)
 axes[1,1].plot(year_dates[13:8760:24], ds_ClimSPV.RolHour10[13:8760:24],label='Rolling hourly 10', color='peachpuff', alpha=0.3)
-axes[1,1].plot(year_dates[8:8760:24], ds_ClimSPV.RolHour10[8:8760:24], color='peachpuff', alpha=0.3)
+# axes[1,1].plot(year_dates[8:8760:24], ds_ClimSPV.RolHour10[8:8760:24], color='peachpuff', alpha=0.3)
 
 # Rolling clim over 20 days
 axes[0,1].plot(year_dates[13:8760:24], ds_ClimWON.RolHour20[13:8760:24], label='Rolling hourly 20', color='cornflowerblue', alpha=0.3)
 axes[1,1].plot(year_dates[13:8760:24], ds_ClimSPV.RolHour20[13:8760:24],label='Rolling hourly 20', color='peachpuff', alpha=0.3)
-axes[1,1].plot(year_dates[8:8760:24], ds_ClimSPV.RolHour20[8:8760:24], color='peachpuff', alpha=0.3)
+# axes[1,1].plot(year_dates[8:8760:24], ds_ClimSPV.RolHour20[8:8760:24], color='peachpuff', alpha=0.3)
 
 # Rolling clim over 60 days
 axes[0,1].plot(year_dates[13:8760:24], ds_ClimWON.RolHour60[13:8760:24], label='Rolling hourly 60', color='navy', alpha=0.3)
 axes[1,1].plot(year_dates[13:8760:24], ds_ClimSPV.RolHour60[13:8760:24],label='Rolling hourly 60', color='yellow', alpha=0.3)
-axes[1,1].plot(year_dates[8:8760:24], ds_ClimSPV.RolHour60[8:8760:24], color='yellow', alpha=0.3)
+# axes[1,1].plot(year_dates[8:8760:24], ds_ClimSPV.RolHour60[8:8760:24], color='yellow', alpha=0.3)
 
 # Rolling clim over 90 days
 axes[0,1].plot(year_dates[13:8760:24], ds_ClimWON.RolHour90[13:8760:24], label='Rolling hourly 90', color='purple', alpha=0.3)
 axes[1,1].plot(year_dates[13:8760:24], ds_ClimSPV.RolHour90[13:8760:24],label='Rolling hourly 90', color='orange', alpha=0.3)
-axes[1,1].plot(year_dates[8:8760:24], ds_ClimSPV.RolHour90[8:8760:24], color='yellow', alpha=0.3)
+# axes[1,1].plot(year_dates[8:8760:24], ds_ClimSPV.RolHour90[8:8760:24], color='yellow', alpha=0.3)
 
 # Rolling clim over 42 days
 axes[0,1].plot(year_dates[13:8760:24], ds_ClimWON.RolHour42[13:8760:24], label='Rolling hourly 42', color='blue', alpha=0.3)
 axes[1,1].plot(year_dates[13:8760:24], ds_ClimSPV.RolHour42[13:8760:24],label='Rolling hourly 42', color='red', alpha=0.3)
-axes[1,1].plot(year_dates[8:8760:24], ds_ClimSPV.RolHour42[8:8760:24], color='red', alpha=0.3)
+# axes[1,1].plot(year_dates[8:8760:24], ds_ClimSPV.RolHour42[8:8760:24], color='red', alpha=0.3)
 
 
 
@@ -171,8 +171,8 @@ axes[0,2].plot(year_dates[StartTime:EndTime], ds_WON.NL01.sel(time=slice(str(Yea
 axes[1,2].plot(year_dates[StartTime:EndTime], ds_SPV.NL01.sel(time=slice(str(YearShowCase)+'-01-01', str(YearShowCase)+'-12-31'))[StartTime:EndTime], color='orange',  label='Potential for '+str(YearShowCase), alpha=0.3)
 
 # add hourly clim
-axes[0,2].plot(year_dates[StartTime:EndTime], ds_ClimWON.Hourly[StartTime:EndTime], label='Hourly climatology', color='lightslategray', alpha=0.6)
-axes[1,2].plot(year_dates[StartTime:EndTime], ds_ClimSPV.Hourly[StartTime:EndTime], label='Hourly climatology', color='burlywood', alpha=0.6)
+axes[0,2].plot(year_dates[StartTime:EndTime], ds_ClimWON.Hourly[StartTime:EndTime], label='Initial climatology', color='lightslategray', alpha=0.6)
+axes[1,2].plot(year_dates[StartTime:EndTime], ds_ClimSPV.Hourly[StartTime:EndTime], label='Initial climatology', color='burlywood', alpha=0.6)
 
 # Add the 
 axes[0,2].plot(year_dates[StartTime:EndTime], ds_ClimWON.RolHour42[StartTime:EndTime], label='Rolling hourly 42', color='blue', alpha=0.6)
@@ -193,18 +193,15 @@ axes[1,2].set_ylim(0,0.75)
 
 
 # formate the date-axis 
-xfmt_years = mdates.DateFormatter('%b')
 for a, b in [[0,0], [0,1], [1,0], [1,1]]:
-    axes[a,b].xaxis.set_major_locator(mdates.MonthLocator(bymonth=(3, 6, 9, 12)))
-    axes[a,b].xaxis.set_minor_locator(mdates.MonthLocator())
-    axes[a,b].xaxis.set_major_formatter(xfmt_years)
+    axes[a,b].xaxis.set_major_locator(mdates.MonthLocator(bymonth=(1,4,7,10)))
+    axes[a,b].xaxis.set_minor_locator(mdates.MonthLocator(bymonth=1))
+    axes[a,b].xaxis.set_major_formatter(mdates.DateFormatter('%B'))
 
-
-xfmt_years = mdates.DateFormatter('%d-%m')
 for a, b in [[0,2], [1,2]]:
     axes[a,b].xaxis.set_major_locator(mdates.DayLocator(interval=4))
     # axy.xaxis.set_minor_locator(mdates.MonthLocator())
-    axes[a,b].xaxis.set_major_formatter(xfmt_years)
+    axes[a,b].xaxis.set_major_formatter(mdates.DateFormatter('%d-%m'))
 
 
 
@@ -217,8 +214,8 @@ axes[0,2].legend(loc='upper right', fontsize='medium')
 axes[1,2].legend(loc='upper right', fontsize='medium')
 
 # Fix labels
-axes[0,0].set_ylabel('WON potential [0-1]')
-axes[1,0].set_ylabel('SPV potential [0-1]')
+axes[0,0].set_ylabel('Wind potential')
+axes[1,0].set_ylabel('Solar potential')
 axes[0,1].set_ylabel('')
 axes[1,1].set_ylabel('')
 axes[0,2].set_ylabel('')

@@ -15,6 +15,8 @@ import pandas as pd
 import xarray as xr
 import sys
 from datetime import datetime
+import matplotlib.dates as mdates
+
 
 # The scripts
 sys.path.append('/Users/3986209/Library/CloudStorage/OneDrive-UniversiteitUtrecht/Projects/ccmetrics/src/')
@@ -66,7 +68,7 @@ ds_WON = df_WON.to_xarray()
 
 
 
-
+#%%
 # =============================================================================
 # Figure for climatological behaviour
 # =============================================================================
@@ -75,32 +77,67 @@ ds_WON = df_WON.to_xarray()
 # we start a new figure
 fig, axes = plt.subplots(nrows=2, ncols=3, figsize=(17,10))
 
-# show years
-ds_WON.NL01[340000:360000].plot(ax=axes[0,0], alpha=0.5, color='dodgerblue')
-ds_SPV.NL01[340000:360000].plot(ax=axes[1,0], alpha=0.5, color='orange')
+# fix date-format
+fig.autofmt_xdate()
+
+# show year
+ds_WON.NL01[193000:215000].plot(ax=axes[0,0], alpha=0.5, color='dodgerblue')
+ds_SPV.NL01[193000:215000].plot(ax=axes[1,0], alpha=0.5, color='orange')
 
 # Show subseasonal
-ds_WON.NL01[350000:352000].plot(ax=axes[0,1], alpha=0.5, color='dodgerblue')
-ds_SPV.NL01[350000:352000].plot(ax=axes[1,1], alpha=0.5, color='orange')
+ds_WON.NL01[202500:205000].plot(ax=axes[0,1], alpha=0.5, color='dodgerblue')
+ds_SPV.NL01[202500:205000].plot(ax=axes[1,1], alpha=0.5, color='orange')
 
 # show diurnal
-ds_WON.NL01[351100:351200].plot(ax=axes[0,2], alpha=0.5, color='dodgerblue')
-ds_SPV.NL01[351100:351200].plot(ax=axes[1,2], alpha=0.5, color='orange')
+ds_WON.NL01[203834:204000].plot(ax=axes[0,2], alpha=0.5, color='dodgerblue')
+ds_SPV.NL01[203834:204000].plot(ax=axes[1,2], alpha=0.5, color='orange')
 
 
-# Fix limits
-# axes[2].set_xlim(1200,1600)
+### Fix limits
+axes[0,0].set_ylim(0,0.92)
+axes[0,1].set_ylim(0,0.92)
+axes[0,2].set_ylim(0,0.92)
+axes[1,0].set_ylim(0,0.75)
+axes[1,1].set_ylim(0,0.75)
+axes[1,2].set_ylim(0,0.75)
 
 # set the legend and labels
 # axes[0].legend(loc='upper right', fontsize='medium')
 
-# Fix labels
-axes[0,0].set_ylabel('WON potential [0-1]')
-axes[1,0].set_ylabel('SPV potential [0-1]')
+
+
+### formate the date-axis 
+# years
+for a, b in [[0,0], [1,0]]:
+    axes[a,b].xaxis.set_major_locator(mdates.YearLocator(base=1))
+    # axes[a,b].xaxis.set_minor_locator(mdates.MonthLocator())
+    axes[a,b].xaxis.set_major_formatter(mdates.DateFormatter('%Y'))
+    
+# months
+for a, b in [[0,1], [1,1]]:
+    axes[a,b].xaxis.set_major_locator(mdates.MonthLocator(interval=3))
+    axes[a,b].xaxis.set_minor_locator(mdates.MonthLocator(interval=1))
+    axes[a,b].xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
+
+# Dates
+for a, b in [[0,2], [1,2]]:
+    axes[a,b].xaxis.set_major_locator(mdates.DayLocator(interval=3))
+    axes[a,b].xaxis.set_minor_locator(mdates.DayLocator(interval=1))
+    axes[a,b].xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
+
+### Fix labels
+# y-label
+axes[0,0].set_ylabel('Wind potential')
+axes[1,0].set_ylabel('Solar potential')
 axes[0,1].set_ylabel('')
 axes[1,1].set_ylabel('')
 axes[0,2].set_ylabel('')
 axes[1,2].set_ylabel('')
+
+# x-label
+axes[0,0].set_xlabel('')
+axes[0,1].set_xlabel('')
+axes[0,2].set_xlabel('')
 
 # make it look better
 plt.tight_layout()

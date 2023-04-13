@@ -93,7 +93,7 @@ ds_ClimWON['RolHour42'], OH = creb.Climatology_Hourly_Rolling(ds_WON, 'NL01', Ro
 # we start a new figure
 fig, axes = plt.subplots(nrows=2, ncols=3, figsize=(17,10))
 
-# fix date-format
+# fix date-format 
 fig.autofmt_xdate()
 
 
