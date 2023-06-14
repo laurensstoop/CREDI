@@ -138,7 +138,14 @@ def Climatology_Hourly_Rolling(InputDataSet, SelectedZone, RollingWindow=1008):
     return OutputDataArray, ordinal_hour
 
 
+# we want a function of just the ordinal hour
+def Ordinal_Hour(InputDataSet):
 
+    ordinal_hour = InputDataSet.time.dt.dayofyear * 24 + InputDataSet.time.dt.hour - 24
+    ordinal_hour = ordinal_hour.rename('OrdinalHour')
+    
+    # Now we return the output dataset that provides the anomaly 
+    return ordinal_hour
 
 
 
