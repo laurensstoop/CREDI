@@ -209,7 +209,7 @@ axes['f)'].set_ylim(0,0.75)
 # formate the date-axis 
 for a in ['a)', 'b)', 'd)', 'e)']:
     axes[a].xaxis.set_major_locator(mdates.MonthLocator(bymonth=(1,4,7,10)))
-    axes[a].xaxis.set_minor_locator(mdates.MonthLocator(bymonth=1))
+    axes[a].xaxis.set_minor_locator(mdates.MonthLocator(interval=1))
     axes[a].xaxis.set_major_formatter(mdates.DateFormatter('%B'))
 
 for a in ['c)', 'f)']:

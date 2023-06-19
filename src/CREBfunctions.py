@@ -73,7 +73,7 @@ def Climatology_Hourly(InputDataSet, SelectedZone):
 
 
 # we want a function of in which the 29t of february is counted correctly
-def Climatology_MOD_Rolling(InputDataSet, SelectedZone, RollingWindow=1008):
+def Climatology_MOD_Rolling(InputDataSet, SelectedZone='none', RollingWindow=1008):
 
     # Method to get a neat definition of the day of the year, based on https://github.com/pydata/xarray/issues/1844#issuecomment-418188977
     not_leap_year = xr.DataArray(~InputDataSet.indexes['time'].is_leap_year, coords=InputDataSet.coords)
@@ -83,7 +83,10 @@ def Climatology_MOD_Rolling(InputDataSet, SelectedZone, RollingWindow=1008):
     modified_ordinal_day = modified_ordinal_day.rename('ModifiedOrdinalDay')
     
     # For the requested zone, we take the rolling centroid mean of 42 days (1008 hours)
-    OutputDataArray = InputDataSet[SelectedZone].rolling(time=RollingWindow,center=True).mean()
+    if SelectedZone == 'none':
+        OutputDataArray = InputDataSet.rolling(time=RollingWindow,center=True).mean()
+    else:
+        OutputDataArray = InputDataSet[SelectedZone].rolling(time=RollingWindow,center=True).mean()
     
     # On this smooth data we determine the climatology
     OutputDataArray = OutputDataArray.groupby(modified_ordinal_day).mean('time')

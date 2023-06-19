@@ -61,8 +61,8 @@ ds_WON = df_WON.to_xarray()
 # =============================================================================
 
 # for easier figures we remove the leap days, see notes in RES-balance functions on how to keep this in
-ds_SPV = ds_SPV.sel(time=~((ds_SPV.time.dt.month == 2) & (ds_SPV.time.dt.day == 29))).sel(time=slice("1991-01-01", "2020-12-31"))
-ds_WON = ds_WON.sel(time=~((ds_WON.time.dt.month == 2) & (ds_WON.time.dt.day == 29))).sel(time=slice("1991-01-01", "2020-12-31"))
+ds_SPV = ds_SPV.sel(time=~((ds_SPV.time.dt.month == 2) & (ds_SPV.time.dt.day == 29))).sel(time=slice("1991-01-01", "2021-12-31"))
+ds_WON = ds_WON.sel(time=~((ds_WON.time.dt.month == 2) & (ds_WON.time.dt.day == 29))).sel(time=slice("1991-01-01", "2021-12-31"))
 
 
 
@@ -123,7 +123,7 @@ ds_WON_save['WON'] = ds_WON.NL01
 # =============================================================================
 
 # Store to disk
-ds_SPV_save.to_netcdf(FOLDER_project+'data/processed/ERA5_SPV_clim-anom_PECD_PEON_hrwCLIM40.nc')
-ds_WON_save.to_netcdf(FOLDER_project+'data/processed/ERA5_WON_clim-anom_PECD_PEON_hrwCLIM40.nc')
+ds_SPV_save.to_netcdf(FOLDER_project+'data/processed/ERA5_SPV_clim-anom_PECD_PEON_hrwCLIM40_additionalYear.nc')
+ds_WON_save.to_netcdf(FOLDER_project+'data/processed/ERA5_WON_clim-anom_PECD_PEON_hrwCLIM40_additionalYear.nc')
 
 

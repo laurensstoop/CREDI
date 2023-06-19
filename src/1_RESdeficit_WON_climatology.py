@@ -15,11 +15,11 @@ import pandas as pd
 import xarray as xr
 import sys
 from datetime import datetime
+import matplotlib.dates as mdates
 
 # The scripts
 sys.path.append('/Users/3986209/Library/CloudStorage/OneDrive-UniversiteitUtrecht/Projects/ccmetrics/src/')
 import CREBfunctions as creb
-
 
 #%%
 import matplotlib.pylab as pylab
@@ -30,7 +30,19 @@ params = {'legend.fontsize': 'xx-large',
          'xtick.labelsize':'xx-large',
          'ytick.labelsize':'xx-large'}
 pylab.rcParams.update(params)
+## colour definitions
 
+# Solar
+colour_solar = 'burlywood' # 0.03
+colour_solar_clim = 'grey' # 1
+colour_solar_hrw = 'tab:red' # 0.7
+colour_solar_credi = 'orange'
+
+# Wind
+colour_wind = 'skyblue' # 0.03
+colour_wind_clim = 'grey' # 1
+colour_wind_hrw = 'dodgerblue' # 0.7
+colour_wind_credi = 'steelblue'
 
 # COLOURS = ['#ffffcc','#c7e9b4','#7fcdbb','#41b6c4','#2c7fb8','#253494']
 # COLOURS = ['#66c2a5','#fc8d62','#8da0cb','#e78ac3','#a6d854','#ffd92f']
@@ -42,9 +54,8 @@ pylab.rcParams.update(params)
 
 # Define some folders
 FOLDER_project='/Users/3986209/Library/CloudStorage/OneDrive-UniversiteitUtrecht/Projects/ccmetrics/'
-FOLDER_pecd = '/Users/3986209/Desktop/PECD/'
+FOLDER_pecd = '/Users/3986209/Library/CloudStorage/OneDrive-UniversiteitUtrecht/Data/PECD/'
 FOLDER_hist = FOLDER_pecd+'HIST/ENER/'
-
 # file name
 fileName= 'WON/PEON/H_ERA5_ECMW_T639_WON_NA---_Pecd_PEON_S198001010000_E202112312300_CFR_TIM_01h_NA-_noc_org_30_NA---_NA---_PhM01.csv'
 
@@ -71,8 +82,8 @@ ds_Clim = xr.Dataset()
 ds_Clim['Daily'], MOD = creb.Climatology_MOD(ds, 'NL01')
 ds_Clim['RolClim10'], MOD = creb.Climatology_MOD_Rolling(ds, 'NL01', RollingWindow=240)
 ds_Clim['RolClim20'], MOD = creb.Climatology_MOD_Rolling(ds, 'NL01', RollingWindow=480)
-ds_Clim['RolClim30'], MOD = creb.Climatology_MOD_Rolling(ds, 'NL01', RollingWindow=960)
-ds_Clim['RolClim42'], MOD = creb.Climatology_MOD_Rolling(ds, 'NL01', RollingWindow=1008)
+ds_Clim['RolClim30'], MOD = creb.Climatology_MOD_Rolling(ds, 'NL01', RollingWindow=720)
+ds_Clim['RolClim42'], MOD = creb.Climatology_MOD_Rolling(ds, 'NL01', RollingWindow=960)
 ds_Clim['RolClim60'], MOD = creb.Climatology_MOD_Rolling(ds, 'NL01', RollingWindow=1920)
 ds_Clim['RolClim90'], MOD = creb.Climatology_MOD_Rolling(ds, 'NL01', RollingWindow=2880)
 
@@ -81,7 +92,7 @@ ds_Clim['Hourly'], MOH = creb.Climatology_Hourly(ds, 'NL01')
 
 ds_Clim['RolHour20'], OH = creb.Climatology_Hourly_Rolling(ds, 'NL01', RollingWindow=20)
 ds_Clim['RolHour60'], OH = creb.Climatology_Hourly_Rolling(ds, 'NL01', RollingWindow=60)
-ds_Clim['RolHour42'], OH = creb.Climatology_Hourly_Rolling(ds, 'NL01', RollingWindow=42)
+ds_Clim['RolHour42'], OH = creb.Climatology_Hourly_Rolling(ds, 'NL01', RollingWindow=40)
 
 
 
@@ -144,33 +155,38 @@ ds_Clim['Harmonic10']  = xr.DataArray(np.real(creb.inverse_fourier_transform(fft
 # we start a new figure
 fig, axes = plt.subplots(nrows=2, ncols=2, figsize=(14,12), sharey=True)
 
+
+fig.autofmt_xdate()
+
+year_dates = pd.date_range('1990-01-01', periods=8760, freq='1h')
+
 # first subplot is the climatology comparison
-ds_Clim.Daily.plot(ax=axes[0,0], label='Daily', alpha=0.5, color='dodgerblue')
-ds_Clim.RolClim30.plot(ax=axes[0,0],label='Rolling [30 d]', color='red')
-ds_Clim.RolClim60.plot(ax=axes[0,0],label='Rolling [60 d]', color='green')
+ds_Clim.Daily.plot(ax=axes[0,0], label='Initial daily', alpha=0.5, color='dodgerblue')
+ds_Clim.RolClim30.plot(ax=axes[0,0],label='HRWO-30', color='red')
+ds_Clim.RolClim60.plot(ax=axes[0,0],label='HRW-60', color='green')
 ds_Clim.Harmonic3.plot(ax=axes[0,0],label='3rd Harmonic', color='black')
 
 # Comparison of rolling climatology
-ds_Clim.Daily.plot(ax=axes[1,0], label='Daily climatology', alpha=0.2, color='dodgerblue')
-ds_Clim.RolClim10.plot(ax=axes[1,0],label='Rolling climatology [10 d]', alpha=0.6)
-ds_Clim.RolClim20.plot(ax=axes[1,0],label='Rolling climatology [20 d]', alpha=0.6)
-ds_Clim.RolClim30.plot(ax=axes[1,0],label='Rolling climatology [30 d]', color='red')
-ds_Clim.RolClim42.plot(ax=axes[1,0],label='Rolling climatology [42 d]', color='black')
-ds_Clim.RolClim60.plot(ax=axes[1,0],label='Rolling climatology [60 d]', color='green')
-ds_Clim.RolClim90.plot(ax=axes[1,0],label='Rolling climatology [90 d]', alpha=0.6)
+ds_Clim.Daily.plot(ax=axes[1,0], label='Initial daily ', alpha=0.2, color='dodgerblue')
+ds_Clim.RolClim10.plot(ax=axes[1,0],label='HRW-10', alpha=0.6)
+ds_Clim.RolClim20.plot(ax=axes[1,0],label='HRW-20', alpha=0.6)
+ds_Clim.RolClim30.plot(ax=axes[1,0],label='HRW-30', color='red')
+ds_Clim.RolClim42.plot(ax=axes[1,0],label='HRW-40', color='black')
+ds_Clim.RolClim60.plot(ax=axes[1,0],label='HRW-60', color='green')
+ds_Clim.RolClim90.plot(ax=axes[1,0],label='HRW-90', alpha=0.6)
 
 # Comparison of Harmonics
-ds_Clim.Daily.plot(ax=axes[0,1], label='Daily climatology', alpha=0.2, color='dodgerblue')
+ds_Clim.Daily.plot(ax=axes[0,1], label='Initial daily climatology', alpha=0.2, color='dodgerblue')
 ds_Clim.Harmonic1.plot(ax=axes[0,1],label='1st Harmonic', color='red')
 ds_Clim.Harmonic3.plot(ax=axes[0,1],label='3rd Harmonic', color='black')
 ds_Clim.Harmonic5.plot(ax=axes[0,1],label='5th Harmonic', color='blue')
 ds_Clim.Harmonic10.plot(ax=axes[0,1],label='10th Harmonic ', color='purple')
 
 # Comparison of Hourly version
-ds_Clim.Hourly[8:8760:24].plot(ax=axes[1,1], label='Hourly climatology', alpha=0.2, color='dodgerblue')
-ds_Clim.RolHour20[8:8760:24].plot(ax=axes[1,1],label='Rolling 20', color='red')
-ds_Clim.RolHour42[8:8760:24].plot(ax=axes[1,1],label='Rolling 42', color='black')
-ds_Clim.RolHour60[8:8760:24].plot(ax=axes[1,1],label='Rolling 60', color='blue')
+axes[1,1].plot(year_dates[8:8760:24], ds_Clim.Hourly[8:8760:24], label='Initial Hourly', alpha=0.2, color='dodgerblue')
+axes[1,1].plot(year_dates[8:8760:24], ds_Clim.RolHour20[8:8760:24], label='Rolling 20', color='red')
+axes[1,1].plot(year_dates[8:8760:24], ds_Clim.RolHour42[8:8760:24], label='Rolling 42', color='black')
+axes[1,1].plot(year_dates[8:8760:24], ds_Clim.RolHour60[8:8760:24], label='Rolling 60', color='blue')
 
 
 # set the legend and labels
@@ -179,21 +195,35 @@ axes[0,1].legend(loc='upper right', fontsize='medium')
 axes[1,0].legend(loc='upper right', fontsize='medium')
 axes[1,1].legend(loc='upper right', fontsize='medium')
 
-axes[0,0].set_title('Climatology methods')
-axes[1,0].set_title('Rolling window comparison')
-axes[0,1].set_title('Harmonic comparison')
-axes[1,1].set_title('Hourly comparison [only 08:00]')
+# axes[0,0].set_title('Climatology methods')
+# axes[1,0].set_title('Rolling window comparison')
+# axes[0,1].set_title('Harmonic comparison')
+# axes[1,1].set_title('Hourly comparison [only 08:00]')
 
 
-axes[0,0].set_ylabel('Climatology of RES-potential')
+axes[0,0].set_ylabel('Wind potential [0-1]')
 axes[0,1].set_ylabel('')
-axes[1,0].set_ylabel('Climatology of RES-potential')
+axes[1,0].set_ylabel('Wind potential [0-1]')
 axes[1,1].set_ylabel('')
+
+
+axes[0,0].set_xlabel('')
+axes[0,1].set_xlabel('')
+axes[1,0].set_xlabel('')
+axes[1,1].set_xlabel('')
+
+# formate the date-axis 
+xfmt_years = mdates.DateFormatter('%b')
+for a, b in [[0,0], [0,1], [1,0], [1,1]]:
+    axes[a,b].xaxis.set_major_locator(mdates.MonthLocator(bymonth=(3, 6, 9, 12)))
+    axes[a,b].xaxis.set_minor_locator(mdates.MonthLocator())
+    axes[a,b].xaxis.set_major_formatter(xfmt_years)
 
 # make it look better
 plt.tight_layout()
 
-plt.savefig(FOLDER_project+'results/figures/Fig_ClimatologyComparison_WON.png')
+plt.savefig(FOLDER_project+'results/publication/supplementary/Fig_ClimatologyComparison_WON.png')
+plt.savefig(FOLDER_project+'results/publication/supplementary/Fig_ClimatologyComparison_WON.pdf')
 
 plt.show()
 
@@ -221,21 +251,21 @@ ds_Clim.Hourly[4:8760:24].plot(ax=axes[1], alpha=0.5, color='dodgerblue')
 ds_Clim.Hourly[6:8760:24].plot(ax=axes[1], alpha=0.5, color='dodgerblue')
 ds_Clim.Hourly[8:8760:24].plot(ax=axes[1], alpha=0.5, color='dodgerblue')
 ds_Clim.Hourly[10:8760:24].plot(ax=axes[1], alpha=0.5, color='dodgerblue')
-ds_Clim.Hourly[12:8760:24].plot(ax=axes[1], label='Hourly climatology', alpha=0.5, color='dodgerblue')
+ds_Clim.Hourly[12:8760:24].plot(ax=axes[1], label='Initial hourly ', alpha=0.5, color='dodgerblue')
 ds_Clim.RolHour42[0:8760:24].plot(ax=axes[1],  color='black')
 ds_Clim.RolHour42[2:8760:24].plot(ax=axes[1],  color='black')
 ds_Clim.RolHour42[4:8760:24].plot(ax=axes[1],  color='black')
 ds_Clim.RolHour42[6:8760:24].plot(ax=axes[1],  color='black')
 ds_Clim.RolHour42[8:8760:24].plot(ax=axes[1],  color='black')
 ds_Clim.RolHour42[10:8760:24].plot(ax=axes[1],  color='black')
-ds_Clim.RolHour42[12:8760:24].plot(ax=axes[1], label='Rolling  Hourly 42', color='black')
+ds_Clim.RolHour42[12:8760:24].plot(ax=axes[1], label='HRW-40', color='black')
 
 
 # limited period
 for year in np.arange(start=1980,stop=2021):
-    axes[2].plot(ds.NL01.sel(time=slice(str(year)+'-01-01', str(year)+'-12-31')), color='yellow', alpha=0.1)    
-ds_Clim.Hourly.plot(ax=axes[2], label='Hourly climatology', alpha=0.5, color='dodgerblue')
-ds_Clim.RolHour42.plot(ax=axes[2], label='Rolling  Hourly 42', color='black')
+    axes[2].plot(ds.NL01.sel(time=slice(str(year)+'-01-01', str(year)+'-12-31')), color=colour_wind, alpha=0.1)    
+ds_Clim.Hourly.plot(ax=axes[2], label='Initial Hourly', alpha=0.5, color='dodgerblue')
+ds_Clim.RolHour42.plot(ax=axes[2], label='HRW-40', color='black')
     
 axes[2].set_xlim(4200,4400)
 
@@ -243,15 +273,16 @@ axes[2].set_xlim(4200,4400)
 axes[0].legend(loc='upper right', fontsize='medium')
 
 
-axes[0].set_ylabel('Climatology of RES-potential')
+axes[0].set_ylabel('Wind potential [0-1]')
 axes[1].set_ylabel('')
 axes[2].set_ylabel('')
 
 # make it look better
 plt.tight_layout()
 
-plt.savefig(FOLDER_project+'results/figures/Fig_ClimatologyChoice_WON.png')
+plt.savefig(FOLDER_project+'results/publication/supplementary/Fig_ClimatologyChoice_WON.png')
 
+plt.savefig(FOLDER_project+'results/publication/supplementary/Fig_ClimatologyChoice_WON.pdf')
 plt.show()
 
 # #%%
