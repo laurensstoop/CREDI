@@ -4,7 +4,7 @@ Spyder Editor
 
 Created on 2023-03-30
 
-Updated on 2023-06-19
+Updated on 2023-06-26
 
 @author: Laurens P. Stoop
 """
@@ -110,7 +110,7 @@ for year in np.arange(start=1991,stop=2021):
     axes['a)'].plot(year_dates, df_WEBi[str(year)], color='dodgerblue', alpha=0.3, linewidth=1)
     
 axes['a)'].plot(year_dates,df_WEBi['1996'], color='red', label='1996', alpha=0.9, linewidth=1)
-axes['a)'].plot(year_dates,df_WEBi['1998'], color='green', label='1996', alpha=0.9, linewidth=1)
+axes['a)'].plot(year_dates,df_WEBi['1998'], color='green', label='1998', alpha=0.9, linewidth=1)
 axes['a)'].plot(year_dates,df_WEBi['2003'], color='purple', label='2003', alpha=0.9, linewidth=1)
 axes['a)'].plot(year_dates,df_WEBi['2016'], color='black', label='2016', alpha=0.9, linewidth=1)
 
@@ -140,7 +140,7 @@ axes['b)'].plot(year_dates,df_WEBi.quantile(0.5,  axis=1), color='dodgerblue', l
 axes['b)'].plot(year_dates,df_WEBi['1996'], color='red', alpha=0.9, linewidth=1)
 # axes['b)'].plot(year_dates,df_WEBi['1998'], color='green', alpha=0.9, linewidth=1)
 # axes['b)'].plot(year_dates,df_WEBi['2003'], color='purple', alpha=0.9, linewidth=1)
-# axes['b)'].plot(year_dates,df_WEBi['2016'], color='black', label='2016', alpha=0.9, linewidth=1)
+axes['b)'].plot(year_dates,df_WEBi['2016'], color='black', label='2016', alpha=0.9, linewidth=1)
 
 
    
@@ -163,7 +163,7 @@ axes['b)'].axhline(y=0.0, color='gray', linestyle='--')
 # formate the date-axis 
 xfmt_years = mdates.DateFormatter('%b')
 for a in ['a)', 'b)']:
-    axes[a].xaxis.set_major_locator(mdates.MonthLocator(bymonth=(3, 6, 9, 12)))
+    axes[a].xaxis.set_major_locator(mdates.MonthLocator(bymonth=(5, 8, 11, 2)))
     axes[a].xaxis.set_minor_locator(mdates.MonthLocator())
     axes[a].xaxis.set_major_formatter(xfmt_years)
 
@@ -276,7 +276,7 @@ axes['b)'].plot(year_dates,df_SEBi.quantile(0.5,  axis=1), color='orange', label
 
 # axes['b)'].plot(year_dates,df_SEBi['1996'], color='red', alpha=0.9, linewidth=1)
 axes['b)'].plot(year_dates,df_SEBi['1998'], color='green', alpha=0.9, linewidth=1)
-# axes['b)'].plot(year_dates,df_SEBi['2003'], color='purple', alpha=0.9, linewidth=1)
+axes['b)'].plot(year_dates,df_SEBi['2003'], color='purple', alpha=0.9, linewidth=1)
 # axes['b)'].plot(year_dates,df_SEBi['2016'], color='black', label='2016', alpha=0.9, linewidth=1)
 
 
@@ -300,7 +300,7 @@ axes['b)'].axhline(y=0.0, color='gray', linestyle='--')
 # formate the date-axis 
 xfmt_years = mdates.DateFormatter('%b')
 for a in ['a)', 'b)']:
-    axes[a].xaxis.set_major_locator(mdates.MonthLocator(bymonth=(3, 6, 9, 12)))
+    axes[a].xaxis.set_major_locator(mdates.MonthLocator(bymonth=(1, 4, 7, 10)))
     axes[a].xaxis.set_minor_locator(mdates.MonthLocator())
     axes[a].xaxis.set_major_formatter(xfmt_years)
 

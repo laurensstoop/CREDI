@@ -4,7 +4,7 @@ Spyder Editor
 
 Created on 2023-06-19
 
-Updated on 2023-06-20
+Updated on 2023-06-26
 
 @author: Laurens P. Stoop
 """
@@ -78,24 +78,28 @@ df_WsS = pd.DataFrame()
 ds_WsSi = xr.Dataset()
 
 # we want to see all years
-for year in np.arange(start=1991,stop=1992):
+for year in np.arange(start=1991,stop=2021):
     
     for seasonday in np.arange(1): #212
         # Show the data for all the years
+        
+        date_seasonday = datetime.datetime(year,9,1)+timedelta(days=int(seasonday))
+        date_seasonday_14 = datetime.datetime(year,9,14,23)+timedelta(days=int(seasonday))
+        
         if year == 1991:
-            ds_WsSi[str(year)] = ds_WONanom.anom.sel(
-                time=slice(
-                    datetime.datetime(year,9,1,0,0) + timedelta(days=int(seasonday)), 
-                    datetime.datetime(year,9,15,0,0) + timedelta(days=int(seasonday))
-                    )).cumsum()
-        # else:
-        #     df_WEBi[str(year)] = ds_WONanom.anom.sel(time=slice(str(year)+'-09-01'+ timedelta(days=int(seasonday)), str(year+1)+'-03-31')+ timedelta(days=int(seasonday))).cumsum().values
+            ds_WsSi[str(date_seasonday)] = ds_WONanom.anom.sel(
+                time=slice(date_seasonday, date_seasonday_14)).cumsum()
+        else:
+            ds_WsSi[str(date_seasonday)] = ds_WONanom.anom.sel(
+                time=slice(date_seasonday, date_seasonday_14)).cumsum().values
+
+Dimension = start_date +& hours since initial
 
 
 
-xr.DataArray(data, coords=[times, locs], dims=["time", "space"])
-pd.date_range("2000-01-01", periods=4)
-["IA", "IL", "IN"]
+# xr.DataArray(data, coords=[times, locs], dims=["time", "space"])
+# pd.date_range("2000-01-01", periods=4)
+# ["IA", "IL", "IN"]
 
 
 #%%
