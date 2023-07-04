@@ -105,7 +105,7 @@ for year in np.arange(start=1991,stop=2021):
     axes['a)'].plot(year_dates, df_WEBi[str(year)], color='dodgerblue', alpha=0.3, linewidth=1)
     
 axes['a)'].plot(year_dates,df_WEBi['1996'], color='red', label='1996', alpha=0.9, linewidth=1)
-axes['a)'].plot(year_dates,df_WEBi['1998'], color='green', label='1996', alpha=0.9, linewidth=1)
+axes['a)'].plot(year_dates,df_WEBi['1998'], color='green', label='1998', alpha=0.9, linewidth=1)
 axes['a)'].plot(year_dates,df_WEBi['2003'], color='purple', label='2003', alpha=0.9, linewidth=1)
 axes['a)'].plot(year_dates,df_WEBi['2016'], color='black', label='2016', alpha=0.9, linewidth=1)
 
@@ -237,7 +237,7 @@ for year in np.arange(start=1991,stop=2021):
     axes['a)'].plot(year_dates, df_WEBi[str(year)], color='dodgerblue', alpha=0.3, linewidth=1)
     
 axes['a)'].plot(year_dates,df_WEBi['1996'], color='red', label='1996', alpha=0.9, linewidth=1)
-axes['a)'].plot(year_dates,df_WEBi['1998'], color='green', label='1996', alpha=0.9, linewidth=1)
+axes['a)'].plot(year_dates,df_WEBi['1998'], color='green', label='1998', alpha=0.9, linewidth=1)
 axes['a)'].plot(year_dates,df_WEBi['2003'], color='purple', label='2003', alpha=0.9, linewidth=1)
 axes['a)'].plot(year_dates,df_WEBi['2016'], color='black', label='2016', alpha=0.9, linewidth=1)
 
@@ -370,7 +370,7 @@ for year in np.arange(start=1991,stop=2021):
     axes['a)'].plot(year_dates, df_SEBi[str(year)], color=colour_solar_credi, alpha=0.5, linewidth=1)
     
 axes['a)'].plot(year_dates,df_SEBi['1996'], color='red', label='1996', alpha=0.9, linewidth=1)
-axes['a)'].plot(year_dates,df_SEBi['1998'], color='green', label='1996', alpha=0.9, linewidth=1)
+axes['a)'].plot(year_dates,df_SEBi['1998'], color='green', label='1998', alpha=0.9, linewidth=1)
 axes['a)'].plot(year_dates,df_SEBi['2003'], color='purple', label='2003', alpha=0.9, linewidth=1)
 axes['a)'].plot(year_dates,df_SEBi['2016'], color='black', label='2016', alpha=0.9, linewidth=1)
 
@@ -501,7 +501,7 @@ for year in np.arange(start=1991,stop=2021):
     axes['a)'].plot(year_dates, df_SEBi[str(year)], color=colour_solar_credi, alpha=0.5, linewidth=1)
     
 axes['a)'].plot(year_dates,df_SEBi['1996'], color='red', label='1996', alpha=0.9, linewidth=1)
-axes['a)'].plot(year_dates,df_SEBi['1998'], color='green', label='1996', alpha=0.9, linewidth=1)
+axes['a)'].plot(year_dates,df_SEBi['1998'], color='green', label='1998', alpha=0.9, linewidth=1)
 axes['a)'].plot(year_dates,df_SEBi['2003'], color='purple', label='2003', alpha=0.9, linewidth=1)
 axes['a)'].plot(year_dates,df_SEBi['2016'], color='black', label='2016', alpha=0.9, linewidth=1)
 
