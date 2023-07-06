@@ -256,42 +256,49 @@ fig.autofmt_xdate()
 year_dates = pd.date_range('1990-01-01', periods=8784, freq='1h')
 
 
-for DA, SeasonName in zip([da_YCS_jan , da_YCS_feb, da_YCS_mar, da_YCS_apr, 
+for DA, SHIFT, SeasonName in zip([da_YCS_jan , da_YCS_feb, da_YCS_mar, da_YCS_apr, 
             da_YCS_may, da_YCS_jun, da_YCS_jul, da_YCS_aug, 
             da_YCS_sep, da_YCS_okt, da_YCS_nov, da_YCS_dec],
+            [0,744,1416,2160,2880,3624,4344,5088,5832,6552,7296,8016],
             ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December' ]):
 
     fig, axes = plt.subplots(nrows=1, ncols=1, figsize=(8,6))#, sharey=True)
 
     axes.fill_between(
-        year_dates, 
+        year_dates.shift(SHIFT), 
         DA.groupby('OrdinalHour').quantile(0, method='closest_observation'),
         DA.groupby('OrdinalHour').quantile(1, method='closest_observation'),
         color='orange', alpha=0.1, label='min-max'
         )
     
     axes.fill_between(
-        year_dates, 
+        year_dates.shift(SHIFT), 
         DA.groupby('OrdinalHour').quantile(0.1, method='closest_observation'),
         DA.groupby('OrdinalHour').quantile(0.9, method='closest_observation'),
         color='orange', alpha=0.2, label='10-90%'
         )
     
     axes.fill_between(
-        year_dates,
+        year_dates.shift(SHIFT),
         DA.groupby('OrdinalHour').quantile(0.25, method='closest_observation'),
         DA.groupby('OrdinalHour').quantile(0.75, method='closest_observation'),
         color='orange', alpha=0.4, label='25-75%'
         )
     
-    axes.plot(year_dates,DA.groupby('OrdinalHour').quantile(0.5, method='closest_observation'), 
+    axes.plot(year_dates.shift(SHIFT),DA.groupby('OrdinalHour').quantile(0.5, method='closest_observation'), 
               color='orange', label='50%')
 
+
+    # add the storylines
+    axes.plot(year_dates.shift(SHIFT)[0:8760],DA.sel(time='1996'), color='red', label='1996', alpha=0.9, linewidth=1)
+    axes.plot(year_dates.shift(SHIFT)[0:8760],DA.sel(time='1998'), color='green', label='1998', alpha=0.9, linewidth=1)
+    axes.plot(year_dates.shift(SHIFT)[0:8760],DA.sel(time='2003'), color='purple', label='2003', alpha=0.9, linewidth=1)
+    axes.plot(year_dates.shift(SHIFT)[0:8760],DA.sel(time='2016'), color='black', label='2016', alpha=0.9, linewidth=1)
     
     
     axes.set_ylabel('Solar CREDI [FLH]')
     axes.set_xlabel('')
-    axes.set_title(SeasonName)
+    # axes.set_title(SeasonName)
     
     axes.legend(loc='lower left', fontsize='medium')
 
@@ -308,8 +315,8 @@ for DA, SeasonName in zip([da_YCS_jan , da_YCS_feb, da_YCS_mar, da_YCS_apr,
     # make it look better
     plt.tight_layout()
 
-    plt.savefig(FOLDER_project+'results/figures_development/Fig_CUMSUM_YearStart_SPV_'+SeasonName+'.pdf')
-    plt.savefig(FOLDER_project+'results/figures_development/Fig_CUMSUM_YearStart_SPV_'+SeasonName+'.png')
+    plt.savefig(FOLDER_project+'results/publication/supplementary/Fig_CUMSUM_YearStart_SPV_'+SeasonName+'.pdf')
+    plt.savefig(FOLDER_project+'results/publication/supplementary/Fig_CUMSUM_YearStart_SPV_'+SeasonName+'.png')
 
     plt.show()
 
