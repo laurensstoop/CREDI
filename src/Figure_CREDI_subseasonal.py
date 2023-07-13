@@ -63,106 +63,188 @@ FOLDER_project='/Users/3986209/Library/CloudStorage/OneDrive-UniversiteitUtrecht
 # =============================================================================
 
 
+
 # Store to disk
 ds_SPVanom = xr.open_dataset(FOLDER_project+'data/processed/ERA5_SPV_clim-anom_PECD_PEON_hrwCLIM40_additionalYear.nc')
 ds_WONanom = xr.open_dataset(FOLDER_project+'data/processed/ERA5_WON_clim-anom_PECD_PEON_hrwCLIM40_additionalYear.nc')
 
 
-#%% WIND
-# =============================================================================
-# Winter WIND
-# =============================================================================
-
-# Initialize the dataframe
-df_WsS = pd.DataFrame()
-ds_WsSi = xr.Dataset()
-
-# we want to see all years
-for year in np.arange(start=1991,stop=2021):
-    
-    for seasonday in np.arange(1): #212
-        # Show the data for all the years
-        
-        date_seasonday = datetime.datetime(year,9,1)+timedelta(days=int(seasonday))
-        date_seasonday_14 = datetime.datetime(year,9,14,23)+timedelta(days=int(seasonday))
-        
-        if year == 1991:
-            ds_WsSi[str(date_seasonday)] = ds_WONanom.anom.sel(
-                time=slice(date_seasonday, date_seasonday_14)).cumsum()
-        else:
-            ds_WsSi[str(date_seasonday)] = ds_WONanom.anom.sel(
-                time=slice(date_seasonday, date_seasonday_14)).cumsum().values
-
-Dimension = start_date +& hours since initial
-
-
-
-# xr.DataArray(data, coords=[times, locs], dims=["time", "space"])
-# pd.date_range("2000-01-01", periods=4)
-# ["IA", "IL", "IN"]
 
 
 #%%
 
-ds_subsW = xr.Dataset()
+ds_WS = xr.Dataset()
 
-# show years
-year_dates = pd.date_range('1999-09-01',periods=5088, freq='1h')
+r = ds_WONanom.rolling(time=366)
 
-# we want to see all years
-
-
+ds_WS['anom_event'] = r.construct(time = "event_hour", stride=24).anom
+ds_WS['WON_event'] = r.construct(time = "event_hour", stride=24).WON
 
 
-# we start a new figure
-# fig, axes = plt.subplot_mosaic([['a)', 'b)']], figsize=(13,5))
-fig, axes = plt.subplot_mosaic([['a)', 'b)', 'c)']], figsize=(18,5))
 
 
-# fix date-format
-fig.autofmt_xdate()
 
-### First plot the initial yearly energy balance index and additional lines 
+#%% figure starts
+
+# Historgram of probability
+ds_WS.anom_event.cumsum(dim='event_hour').sel(event_hour=365).plot.hist(range=(-110,160), bins=54)
 
 
-# we want to see all years
-for year in np.arange(start=1991,stop=2021):
+# Scatter anom.cumsum vs event_hour
+ds_WS.anom_event.cumsum(dim='event_hour').plot.scatter(x='event_hour')
+
+# Lineplot for each timestep (slow!)
+ds_WS.anom_event.cumsum(dim='event_hour').plot.line(x='event_hour', add_legend=False)
+
+
+
+
+#%% event filter ideas 
+
+# a.where(a.x + a.y < 4, drop=True)
+
+# return index of max value
+ds_WS.cumsum(dim='event_hour').sel(event_hour=365).idxmax()
+
+
+
+
+
+
+#%%
+
+df = ds_WS.cumsum(dim='event_hour').sel(event_hour=365).to_pandas()
+df = df.nsmallest(100000, 'anom_event', keep='all')
+# df = df.nlargest(100000, 'anom_event', keep='all')
+
+#%%
+
+# dropp all less then 5 days away
+df.drop(df.loc[(abs(df.index - df.index[0]) < timedelta(5))].index)
+
+events = []
+
+for i in np.arange(1000):
+    events.append(df.iloc[0].name)
+    df = df.drop(df.loc[(abs(df.index - df.index[0]) < timedelta(5))].index)
     
-    # Show the data for all the years
-    axes['a)'].plot(year_dates, df_WEBi[str(year)], color='dodgerblue', alpha=0.3, linewidth=1)
+
+#%%
+
+# time-series van anom tijdens event
+ds_WS.sel(time=events[0]).anom_event.plot()
+
+# CREDI tijdens event
+ds_WS.sel(time=events[0]).anom_event.cumsum().plot()
+
+# WON tijdens event
+ds_WS.sel(time=events[0]).WON_event.plot()
+
+# for a histogram of the dates
+# https://stackoverflow.com/questions/27365467/can-pandas-plot-a-histogram-of-dates
+
+
+
+
+
+
+
+
+# #%% WIND
+# # =============================================================================
+# # Winter WIND
+# # =============================================================================
+
+# # Initialize the dataframe
+# df_WsS = pd.DataFrame()
+# ds_WsSi = xr.Dataset()
+
+# # we want to see all years
+# for year in np.arange(start=1991,stop=2021):
     
-axes['a)'].plot(year_dates,df_WEBi['1996'], color='red', label='1996', alpha=0.9, linewidth=1)
-axes['a)'].plot(year_dates,df_WEBi['1998'], color='green', label='1996', alpha=0.9, linewidth=1)
-axes['a)'].plot(year_dates,df_WEBi['2003'], color='purple', label='2003', alpha=0.9, linewidth=1)
-axes['a)'].plot(year_dates,df_WEBi['2016'], color='black', label='2016', alpha=0.9, linewidth=1)
+#     for seasonday in np.arange(1): #212
+#         # Show the data for all the years
+        
+#         date_seasonday = datetime.datetime(year,9,1)+timedelta(days=int(seasonday))
+#         date_seasonday_14 = datetime.datetime(year,9,14,23)+timedelta(days=int(seasonday))
+        
+#         if year == 1991:
+#             ds_WsSi[str(date_seasonday)] = ds_WONanom.anom.sel(
+#                 time=slice(date_seasonday, date_seasonday_14)).cumsum()
+#         else:
+#             ds_WsSi[str(date_seasonday)] = ds_WONanom.anom.sel(
+#                 time=slice(date_seasonday, date_seasonday_14)).cumsum().values
 
-axes['b)'].fill_between(
-    year_dates, 
-    df_WEBi.quantile(0,  axis=1),
-    df_WEBi.quantile(1,  axis=1),
-    color='dodgerblue', alpha=0.05, label='min-max'
-    )
+# Dimension = start_date +& hours since initial
 
-axes['b)'].fill_between(
-    year_dates, 
-    df_WEBi.quantile(0.1,  axis=1),
-    df_WEBi.quantile(0.9,  axis=1),
-    color='dodgerblue', alpha=0.1, label='10-90%'
-    )
 
-axes['b)'].fill_between(
-    year_dates, 
-    df_WEBi.quantile(0.25,  axis=1),
-    df_WEBi.quantile(0.75,  axis=1),
-    color='dodgerblue', alpha=0.2, label='25-75%'
-    )
 
-axes['b)'].plot(year_dates,df_WEBi.quantile(0.5,  axis=1), color='dodgerblue', label='50%')
+# # xr.DataArray(data, coords=[times, locs], dims=["time", "space"])
+# # pd.date_range("2000-01-01", periods=4)
+# # ["IA", "IL", "IN"]
 
-axes['b)'].plot(year_dates,df_WEBi['1996'], color='red', alpha=0.9, linewidth=1)
-# axes['b)'].plot(year_dates,df_WEBi['1998'], color='green', alpha=0.9, linewidth=1)
-# axes['b)'].plot(year_dates,df_WEBi['2003'], color='purple', alpha=0.9, linewidth=1)
-# axes['b)'].plot(year_dates,df_WEBi['2016'], color='black', label='2016', alpha=0.9, linewidth=1)
+
+# #%%
+
+# ds_subsW = xr.Dataset()
+
+# # show years
+# year_dates = pd.date_range('1999-09-01',periods=5088, freq='1h')
+
+# # we want to see all years
+
+
+
+
+# # we start a new figure
+# # fig, axes = plt.subplot_mosaic([['a)', 'b)']], figsize=(13,5))
+# fig, axes = plt.subplot_mosaic([['a)', 'b)', 'c)']], figsize=(18,5))
+
+
+# # fix date-format
+# fig.autofmt_xdate()
+
+# ### First plot the initial yearly energy balance index and additional lines 
+
+
+# # we want to see all years
+# for year in np.arange(start=1991,stop=2021):
+    
+#     # Show the data for all the years
+#     axes['a)'].plot(year_dates, df_WEBi[str(year)], color='dodgerblue', alpha=0.3, linewidth=1)
+    
+# axes['a)'].plot(year_dates,df_WEBi['1996'], color='red', label='1996', alpha=0.9, linewidth=1)
+# axes['a)'].plot(year_dates,df_WEBi['1998'], color='green', label='1996', alpha=0.9, linewidth=1)
+# axes['a)'].plot(year_dates,df_WEBi['2003'], color='purple', label='2003', alpha=0.9, linewidth=1)
+# axes['a)'].plot(year_dates,df_WEBi['2016'], color='black', label='2016', alpha=0.9, linewidth=1)
+
+# axes['b)'].fill_between(
+#     year_dates, 
+#     df_WEBi.quantile(0,  axis=1),
+#     df_WEBi.quantile(1,  axis=1),
+#     color='dodgerblue', alpha=0.05, label='min-max'
+#     )
+
+# axes['b)'].fill_between(
+#     year_dates, 
+#     df_WEBi.quantile(0.1,  axis=1),
+#     df_WEBi.quantile(0.9,  axis=1),
+#     color='dodgerblue', alpha=0.1, label='10-90%'
+#     )
+
+# axes['b)'].fill_between(
+#     year_dates, 
+#     df_WEBi.quantile(0.25,  axis=1),
+#     df_WEBi.quantile(0.75,  axis=1),
+#     color='dodgerblue', alpha=0.2, label='25-75%'
+#     )
+
+# axes['b)'].plot(year_dates,df_WEBi.quantile(0.5,  axis=1), color='dodgerblue', label='50%')
+
+# axes['b)'].plot(year_dates,df_WEBi['1996'], color='red', alpha=0.9, linewidth=1)
+# # axes['b)'].plot(year_dates,df_WEBi['1998'], color='green', alpha=0.9, linewidth=1)
+# # axes['b)'].plot(year_dates,df_WEBi['2003'], color='purple', alpha=0.9, linewidth=1)
+# # axes['b)'].plot(year_dates,df_WEBi['2016'], color='black', label='2016', alpha=0.9, linewidth=1)
 
 
    
