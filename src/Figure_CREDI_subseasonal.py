@@ -21,124 +21,194 @@ from datetime import timedelta
 import datetime
 
 
-
-#%%
+# Set general definitions of figures 
 import matplotlib.pylab as pylab
 params = {'legend.fontsize': 'xx-large',
-          'figure.figsize': (15, 5),
+          'figure.figsize': (10, 7),
          'axes.labelsize': 'xx-large',
          'axes.titlesize':'xx-large',
          'xtick.labelsize':'xx-large',
          'ytick.labelsize':'xx-large'}
 pylab.rcParams.update(params)
 
-## colour definitions
-
+## Colour definitions
 # Solar
 colour_solar = 'burlywood' # 0.03
 colour_solar_clim = 'grey' # 1
 colour_solar_hrw = 'tab:red' # 0.7
 colour_solar_credi = 'orange'
-
 # Wind
 colour_wind = 'skyblue' # 0.03
 colour_wind_clim = 'grey' # 1
 colour_wind_hrw = 'dodgerblue' # 0.7
 colour_wind_credi = 'steelblue'
 
-# COLOURS = ['#ffffcc','#c7e9b4','#7fcdbb','#41b6c4','#2c7fb8','#253494']
-# COLOURS = ['#66c2a5','#fc8d62','#8da0cb','#e78ac3','#a6d854','#ffd92f']
+#%%
+# =============================================================================
+# Choices and parameter settings
+# =============================================================================
+
+## Length of the period to consider for CREDI assessment (in hours)
+# add 1 to get indexes that make sense
+PERIOD_length = 337
+
+# Sampling of the period (in hours)
+PERIOD_stride = 24
+
+
+# Events selected (max value ~ 1948-1967)
+EVENTS_topk = 1945
+
+
+
+
 
 #%%
 # =============================================================================
-# Define file locations
+# Data definition & loading
 # =============================================================================
 
 # Define some folders
 FOLDER_project='/Users/3986209/Library/CloudStorage/OneDrive-UniversiteitUtrecht/Projects/ccmetrics/'
 
-#%%
-# =============================================================================
-# Get the data to open
-# =============================================================================
 
-
-
-# Store to disk
+## Retrieve from disk
+# Solar
 ds_SPVanom = xr.open_dataset(FOLDER_project+'data/processed/ERA5_SPV_clim-anom_PECD_PEON_hrwCLIM40_additionalYear.nc')
+# Wind
 ds_WONanom = xr.open_dataset(FOLDER_project+'data/processed/ERA5_WON_clim-anom_PECD_PEON_hrwCLIM40_additionalYear.nc')
 
 
 
 
 #%%
+# =============================================================================
+# Create a new subseason dataset with the period length (~10 seconds)
+# =============================================================================
 
-ds_WS = xr.Dataset()
+# main dataset
+ds = xr.Dataset()
 
-r = ds_WONanom.rolling(time=366)
-
-ds_WS['anom_event'] = r.construct(time = "event_hour", stride=24).anom
-ds_WS['WON_event'] = r.construct(time = "event_hour", stride=24).WON
-
-
-
-
-
-#%% figure starts
-
-# Historgram of probability
-ds_WS.anom_event.cumsum(dim='event_hour').sel(event_hour=365).plot.hist(range=(-110,160), bins=54)
+## Adding in the data
+# Solar
+ds['SPVanom_event'] = ds_SPVanom.rolling(time=PERIOD_length).construct(time = "event_hour", stride=PERIOD_stride).anom
+ds['SPV_event'] = ds_SPVanom.rolling(time=PERIOD_length).construct(time = "event_hour", stride=PERIOD_stride).SPV
+# Wind
+ds['WONanom_event'] = ds_WONanom.rolling(time=PERIOD_length).construct(time = "event_hour", stride=PERIOD_stride).anom
+ds['WON_event'] = ds_WONanom.rolling(time=PERIOD_length).construct(time = "event_hour", stride=PERIOD_stride).WON
 
 
-# Scatter anom.cumsum vs event_hour
-ds_WS.anom_event.cumsum(dim='event_hour').plot.scatter(x='event_hour')
+# Assign coordinates to event_hour (in timedelta's)
+ds = ds.assign_coords(event_hour=pd.to_timedelta(range(PERIOD_length), unit='h'))
 
-# Lineplot for each timestep (slow!)
-ds_WS.anom_event.cumsum(dim='event_hour').plot.line(x='event_hour', add_legend=False)
+
+#%% sample figure starts
+# =============================================================================
+# A few quick figures
+# =============================================================================
+
+
+#%% Historgram of probability
+# Solar
+ds.SPVanom_event.cumsum(dim='event_hour').sel(event_hour=timedelta(hours=PERIOD_length-1)).plot.hist(range=(-25,30), bins=54)
+plt.show()
+# Wind
+ds.WONanom_event.cumsum(dim='event_hour').sel(event_hour=timedelta(hours=PERIOD_length-1)).plot.hist(range=(-110,160), bins=54)
+plt.show()
+
+#%% Scatter anom.cumsum vs event_hour
+
+# redefine coordinates
+ds = ds.assign_coords(event_hour=range(PERIOD_length))
+
+
+# Solar
+ds.SPVanom_event.cumsum(dim='event_hour').plot.scatter(x='event_hour', alpha=0.003)
+plt.show()
+# Wind
+ds.WONanom_event.cumsum(dim='event_hour').plot.scatter(x='event_hour', alpha=0.03)
+plt.show()
+
+#%% Lineplot for each timestep (slow: ~15 seconds total)
+# Solar
+ds.SPVanom_event.cumsum(dim='event_hour').plot.line(x='event_hour', add_legend=False)
+plt.show()
+# Wind
+ds.WONanom_event.cumsum(dim='event_hour').plot.line(x='event_hour', add_legend=False)
+plt.show()
+
+
 
 
 
 
 #%% event filter ideas 
-
-# a.where(a.x + a.y < 4, drop=True)
-
-# return index of max value
-ds_WS.cumsum(dim='event_hour').sel(event_hour=365).idxmax()
+# =============================================================================
+# Event filtering method
+# =============================================================================
 
 
+## return index of max value
+# Not used, but can be handy
+ds.cumsum(dim='event_hour').sel(event_hour=PERIOD_length-1).idxmax()
 
 
+#%% Generate event list for highest/lowest events 
 
+# Generate dataset of last event hours
+df = ds.cumsum(dim='event_hour').sel(event_hour=PERIOD_length-1).to_pandas()
 
-#%%
-
-df = ds_WS.cumsum(dim='event_hour').sel(event_hour=365).to_pandas()
-df = df.nsmallest(100000, 'anom_event', keep='all')
+# Select the smallest 100K events (technically all are listed as we do not drop data)
+# Solar
+df_SPV = df.nsmallest(100000, 'SPVanom_event', keep='all')
+# Wind
+df_WON = df.nsmallest(100000, 'WONanom_event', keep='all')
 # df = df.nlargest(100000, 'anom_event', keep='all')
 
-#%%
+#%% Filter the full dataset to only get the top-k events
 
-# dropp all less then 5 days away
-df.drop(df.loc[(abs(df.index - df.index[0]) < timedelta(5))].index)
+## dropp all less then 5 days away 
+# not used, but shows example
+df_SPV.drop(df_SPV.loc[(abs(df_SPV.index - df_SPV.index[0]) < timedelta(5))].index)
 
-events = []
+# Make event list
+# Solar
+SPV_events = []
+# Wind
+WON_events = []
 
-for i in np.arange(1000):
-    events.append(df.iloc[0].name)
-    df = df.drop(df.loc[(abs(df.index - df.index[0]) < timedelta(5))].index)
+for i in np.arange(EVENTS_topk):
+    
+    ## add the top-k event to the list
+    # Solar
+    if i < 1948:
+        SPV_events.append(df_SPV.iloc[0].name)
+    # Wind
+    WON_events.append(df_WON.iloc[0].name)
+    
+    ## now filter this event and all others
+    # Solar
+    if i < 1948:
+        df_SPV = df_SPV.drop(df_SPV.loc[(abs(df_SPV.index - df_SPV.index[0]) < timedelta(5))].index)
+    # Wind
+    df_WON = df_WON.drop(df_WON.loc[(abs(df_WON.index - df_WON.index[0]) < timedelta(5))].index)
     
 
 #%%
 
 # time-series van anom tijdens event
-ds_WS.sel(time=events[0]).anom_event.plot()
+ds.sel(time=WON_events[0]).WONanom_event.plot()
+plt.show()
+
 
 # CREDI tijdens event
-ds_WS.sel(time=events[0]).anom_event.cumsum().plot()
+ds.sel(time=WON_events[0]).WONanom_event.cumsum().plot()
+plt.show()
+
 
 # WON tijdens event
-ds_WS.sel(time=events[0]).WON_event.plot()
+ds.sel(time=WON_events[0]).WON_event.plot()
+plt.show()
 
 # for a histogram of the dates
 # https://stackoverflow.com/questions/27365467/can-pandas-plot-a-histogram-of-dates
