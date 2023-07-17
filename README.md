@@ -1,8 +1,8 @@
-# Climate change metrics
+# Metric: The Climatological Renewable Energy Deviation Index
 
-Version 0.1.0
+Version 1.0.0
 
-A set of metrics to assess the influence of Climate Change on the energy system. If you want to add a metrics, please feel free to contact me. 
+A metrics to quantify, understand, and explain, the impact of the variability of weather on the energy system across timescales. If you want to add a feature, please feel free to do so. 
 
 
 ## Project organization
