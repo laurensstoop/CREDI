@@ -554,7 +554,7 @@ axes['a)'].set_ylim(-75,50)
 
 # Fix labels
 axes['a)'].set_ylabel('Wind CREDI [FLH]')
-axes['b)'].set_ylabel('')
+axes['b)'].set_ylabel('Wind potential [0-1]')
 
 
 
@@ -576,7 +576,7 @@ plt.show()
 
 #%%
 # =============================================================================
-# Figure for short term scatter CREDI spv won
+# Figure for short term scatter CREDI spv won TOP 50
 # =============================================================================
 
 
@@ -590,20 +590,40 @@ fig, axes = plt.subplot_mosaic([['a)']], figsize=(10,7))
 
 # Coincidence of CREDI extremes
 # Show the data for all the years
-df.plot.scatter(
-    x='WON_event_credi', 
-    y='SPV_event_credi', 
-    ax=axes['a)'],
-    color='dodgerblue', 
-    alpha=1)
+# df.plot.scatter(
+#     x='WON_event_credi', 
+#     y='SPV_event_credi', 
+#     ax=axes['a)'],
+#     color='dodgerblue', 
+#     alpha=1)
 
+# look at WON events
+for date_of_events in WON_event_date[0:50]:
+    
+    axes['a)'].scatter(
+        x=ds.sel(time=date_of_events, event_hour=PERIOD_length-1).CREDI_won.values,
+        y=ds.sel(time=date_of_events, event_hour=PERIOD_length-1).CREDI_spv.values, 
+        color='dodgerblue', 
+        label='Wind events', 
+        alpha=0.5)
+    
+
+# look at WON events
+for date_of_events in SPV_event_date[0:50]:
+    
+    axes['a)'].scatter(
+        x=ds.sel(time=date_of_events, event_hour=PERIOD_length-1).CREDI_won.values,
+        y=ds.sel(time=date_of_events, event_hour=PERIOD_length-1).CREDI_spv.values, 
+        color='orange', 
+        label='Solar events', 
+        alpha=0.5)
     
 
    
 # Show selected years 
 for year_selected, year_colour in zip([1996,1998,2003,2016], ['red', 'green','purple','black']):
 
-    # look at sub-top years
+    # look at sub-top years WON
     for date_of_events in WON_event_date[0:50]:
         
         # If the date of the event is after may in the year selected plot it
@@ -613,9 +633,7 @@ for year_selected, year_colour in zip([1996,1998,2003,2016], ['red', 'green','pu
                 y=ds.sel(time=date_of_events, event_hour=PERIOD_length-1).CREDI_spv.values, 
                 color=year_colour, 
                 label=str(year_selected), 
-                alpha=0.9, 
-                linewidth=1
-                )
+                alpha=0.5)
         
         # if the date of the events is before may in the year+1 selected (second half of season) plot it 
         elif date_of_events.year == year_selected+1 and date_of_events.month <= SEASON_start_WON:
@@ -624,8 +642,164 @@ for year_selected, year_colour in zip([1996,1998,2003,2016], ['red', 'green','pu
                 y=ds.sel(time=date_of_events, event_hour=PERIOD_length-1).CREDI_spv.values, 
                 color=year_colour, 
                 label=str(year_selected),
-                alpha=0.9, 
-                linewidth=1)
+                alpha=0.5)
+
+       # look at SPV
+    for date_of_events in SPV_event_date[0:50]:
+       
+       # If the date of the event is after may in the year selected plot it
+       if date_of_events.year == year_selected and date_of_events.month > SEASON_start_WON:
+           axes['a)'].scatter(
+               x=ds.sel(time=date_of_events, event_hour=PERIOD_length-1).CREDI_won.values,
+               y=ds.sel(time=date_of_events, event_hour=PERIOD_length-1).CREDI_spv.values, 
+               color=year_colour, 
+               label=str(year_selected), 
+               alpha=0.5)
+       
+       # if the date of the events is before may in the year+1 selected (second half of season) plot it 
+       elif date_of_events.year == year_selected+1 and date_of_events.month <= SEASON_start_WON:
+           axes['a)'].scatter(
+               x=ds.sel(time=date_of_events, event_hour=PERIOD_length-1).CREDI_won.values,
+               y=ds.sel(time=date_of_events, event_hour=PERIOD_length-1).CREDI_spv.values, 
+               color=year_colour, 
+               label=str(year_selected),
+               alpha=0.5)
+
+
+
+
+# Now fix the nice stuff
+
+## Legends
+# get legend handles and their corresponding labels
+handles_a, labels_a = axes['a)'].get_legend_handles_labels()
+
+# zip labels as keys and handles as values into a dictionary, ...
+# so only unique labels would be stored 
+dict_of_labels_a = dict(zip(labels_a, handles_a))
+
+
+# set the legend and labels
+axes['a)'].legend(dict_of_labels_a.values(), dict_of_labels_a.keys(),loc='upper right', fontsize='medium')
+
+
+# #  Set limits
+# axes['a)'].set_ylim(-75,50)
+# # axes['b)'].set_ylim(-75,50)
+
+# Fix labels
+axes['a)'].set_xlabel('Wind CREDI [FLH]')
+axes['a)'].set_ylabel('Solar CREDI [FLH]')
+
+
+
+
+# make it look better
+plt.tight_layout()
+
+
+plt.savefig(FOLDER_project+'results/publication/supplementary/WindCREDI_shortterm_scatter_top50.png')
+plt.savefig(FOLDER_project+'results/publication/supplementary/WindCREDI_shortterm_scatter_top50.pdf')
+
+plt.show()
+
+#%%
+# =============================================================================
+# Figure for short term scatter CREDI spv won all
+# =============================================================================
+
+
+# we start a new figure
+# fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(13,5), sharey=True)
+fig, axes = plt.subplot_mosaic([['a)']], figsize=(10,7))
+
+
+### First plot the initial yearly energy balance index and additional lines 
+
+
+# Coincidence of CREDI extremes
+# Show the data for all the years
+# df.plot.scatter(
+#     x='WON_event_credi', 
+#     y='SPV_event_credi', 
+#     ax=axes['a)'],
+#     color='dodgerblue', 
+#     alpha=1)
+
+
+# look at SPV events
+for date_of_events in SPV_event_date:
+    
+    axes['a)'].scatter(
+        x=ds.sel(time=date_of_events, event_hour=PERIOD_length-1).CREDI_won.values,
+        y=ds.sel(time=date_of_events, event_hour=PERIOD_length-1).CREDI_spv.values, 
+        facecolors='none', edgecolors='orange', 
+        label='Solar events', 
+        alpha=0.5)
+    
+# look at WON events
+for date_of_events in WON_event_date:
+    
+    axes['a)'].scatter(
+        x=ds.sel(time=date_of_events, event_hour=PERIOD_length-1).CREDI_won.values,
+        y=ds.sel(time=date_of_events, event_hour=PERIOD_length-1).CREDI_spv.values, 
+        facecolors='none', edgecolors='dodgerblue', 
+        label='Wind events', 
+        alpha=0.5)
+    
+
+    
+
+
+   
+# Show selected years 
+for year_selected, year_colour in zip([1996,1998,2003,2016], ['red', 'green','purple','black']):
+
+    # look at sub-top years WON
+    for date_of_events in WON_event_date[0:50]:
+        
+        # If the date of the event is after may in the year selected plot it
+        if date_of_events.year == year_selected and date_of_events.month > SEASON_start_WON:
+            axes['a)'].scatter(
+                x=ds.sel(time=date_of_events, event_hour=PERIOD_length-1).CREDI_won.values,
+                y=ds.sel(time=date_of_events, event_hour=PERIOD_length-1).CREDI_spv.values, 
+                facecolors=year_colour,
+                label=str(year_selected), 
+                s=20,
+                alpha=1)
+        
+        # if the date of the events is before may in the year+1 selected (second half of season) plot it 
+        elif date_of_events.year == year_selected+1 and date_of_events.month <= SEASON_start_WON:
+            axes['a)'].scatter(
+                x=ds.sel(time=date_of_events, event_hour=PERIOD_length-1).CREDI_won.values,
+                y=ds.sel(time=date_of_events, event_hour=PERIOD_length-1).CREDI_spv.values, 
+                facecolors=year_colour, 
+                label=str(year_selected),
+                s=20,
+                alpha=1)
+
+       # look at SPV
+    for date_of_events in SPV_event_date[0:50]:
+       
+       # If the date of the event is after may in the year selected plot it
+       if date_of_events.year == year_selected and date_of_events.month > SEASON_start_WON:
+           axes['a)'].scatter(
+               x=ds.sel(time=date_of_events, event_hour=PERIOD_length-1).CREDI_won.values,
+               y=ds.sel(time=date_of_events, event_hour=PERIOD_length-1).CREDI_spv.values, 
+               facecolors=year_colour, 
+               label=str(year_selected), 
+               s=20,
+               alpha=1)
+       
+       # if the date of the events is before may in the year+1 selected (second half of season) plot it 
+       elif date_of_events.year == year_selected+1 and date_of_events.month <= SEASON_start_WON:
+           axes['a)'].scatter(
+               x=ds.sel(time=date_of_events, event_hour=PERIOD_length-1).CREDI_won.values,
+               y=ds.sel(time=date_of_events, event_hour=PERIOD_length-1).CREDI_spv.values, 
+               facecolors=year_colour,
+               label=str(year_selected), 
+               s=20,
+               alpha=1)
 
 
 
@@ -664,8 +838,6 @@ plt.savefig(FOLDER_project+'results/publication/supplementary/WindCREDI_shortter
 plt.savefig(FOLDER_project+'results/publication/supplementary/WindCREDI_shortterm_scatter.pdf')
 
 plt.show()
-
-
 #%%
 
 #%% Historgram of probability
@@ -673,31 +845,21 @@ plt.show()
 
 # we start a new figure
 # fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(13,5), sharey=True)
-fig, axes = plt.subplot_mosaic([['a)']], figsize=(10,7))
+fig, axes = plt.subplot_mosaic([['a)', 'b)']], figsize=(13,5))
 
-ds.CREDI_spv.sel(event_hour=PERIOD_length-1).plot.hist(range=(-25,30), bins=54, ax=axes['a)'])
+# Solar
+ds.CREDI_spv.sel(event_hour=PERIOD_length-1, time=SPV_event_date).plot.hist(range=(-25,30), bins=54, ax=axes['a)'], color = 'orange')
+# Wind 
+ds.CREDI_won.sel(event_hour=PERIOD_length-1, time=WON_event_date).plot.hist(range=(-110,160), bins=54, ax=axes['b)'], color = 'dodgerblue')
+
 
 # Fix labels
 axes['a)'].set_xlabel('Solar CREDI [FLH]')
 axes['a)'].set_ylabel('Count')
 
-
-# make it look better
+axes['b)'].set_xlabel('Wind CREDI [FLH]')
 plt.tight_layout()
 
-
-plt.savefig(FOLDER_project+'results/publication/supplementary/SolarCREDI_shortterm_histogram.png')
-plt.savefig(FOLDER_project+'results/publication/supplementary/SolarCREDI_shortterm_histogram.pdf')
-plt.show()
-
-# Wind
-fig, axes = plt.subplot_mosaic([['a)']], figsize=(10,7))
-
-ds.CREDI_won.sel(event_hour=PERIOD_length-1).plot.hist(range=(-110,160), bins=54)
-axes['a)'].set_xlabel('Wind CREDI [FLH]')
-axes['a)'].set_ylabel('Count')
-plt.tight_layout()
-
-plt.savefig(FOLDER_project+'results/publication/supplementary/WindREDI_shortterm_histogram.png')
-plt.savefig(FOLDER_project+'results/publication/supplementary/WindCREDI_shortterm_histogram.pdf')
+plt.savefig(FOLDER_project+'results/publication/supplementary/CREDI_shortterm_histogram.png')
+plt.savefig(FOLDER_project+'results/publication/supplementary/CREDI_shortterm_histogram.pdf')
 plt.show()
