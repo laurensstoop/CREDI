@@ -195,16 +195,16 @@ axesS.set_ylabel('Solar potential [0-1]')
 
 
 plt.tight_layout()
-plt.savefig(FOLDER_project+'results/publication/Climatology_sensitivity_solar.png')
-plt.savefig(FOLDER_project+'results/publication/Climatology_sensitivity_solar.pdf')
+plt.savefig(FOLDER_project+'results/supplementary/Climatology_sensitivity_solar.png')
+plt.savefig(FOLDER_project+'results/supplementary/Climatology_sensitivity_solar.pdf')
 plt.show()
 
 
 # make it look better & save
 plt.figure(figW)
 plt.tight_layout()
-plt.savefig(FOLDER_project+'results/publication/Climatology_sensitivity_wind.png')
-plt.savefig(FOLDER_project+'results/publication/Climatology_sensitivity_wind.pdf')
+plt.savefig(FOLDER_project+'results/supplementary/Climatology_sensitivity_wind.png')
+plt.savefig(FOLDER_project+'results/supplementary/Climatology_sensitivity_wind.pdf')
 plt.show()
 
 #%% Figures with multiple methods part only
@@ -303,14 +303,14 @@ axesS.set_ylabel('Solar potential [0-1]')
 
 
 plt.tight_layout()
-plt.savefig(FOLDER_project+'results/publication/Climatology_sensitivity_zoom_solar.png')
-plt.savefig(FOLDER_project+'results/publication/Climatology_sensitivity_zoom_solar.pdf')
+plt.savefig(FOLDER_project+'results/supplementary/Climatology_sensitivity_zoom_solar.png')
+plt.savefig(FOLDER_project+'results/supplementary/Climatology_sensitivity_zoom_solar.pdf')
 plt.show()
 
 
 # make it look better & save
 plt.figure(figW)
 plt.tight_layout()
-plt.savefig(FOLDER_project+'results/publication/Climatology_sensitivity_zoom_wind.png')
-plt.savefig(FOLDER_project+'results/publication/Climatology_sensitivity_zoom_wind.pdf')
+plt.savefig(FOLDER_project+'results/supplementary/Climatology_sensitivity_zoom_wind.png')
+plt.savefig(FOLDER_project+'results/supplementary/Climatology_sensitivity_zoom_wind.pdf')
 plt.show()

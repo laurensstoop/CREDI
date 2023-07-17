@@ -4,7 +4,7 @@ Spyder Editor
 
 Created on 2023-03-30
 
-Updated on 2023-06-11
+Updated on 2023-07-17
 
 @author: Laurens P. Stoop
 """
@@ -23,7 +23,7 @@ import matplotlib.transforms as mtransforms
 
 # The scripts
 sys.path.append('/Users/3986209/Library/CloudStorage/OneDrive-UniversiteitUtrecht/Projects/ccmetrics/src/')
-import CREBfunctions as creb
+import CREDIfunctions as credi
 
 
 #%%
@@ -50,8 +50,15 @@ colour_wind_clim = 'grey' # 1
 colour_wind_hrw = 'dodgerblue' # 0.7
 
 
-# COLOURS = ['#ffffcc','#c7e9b4','#7fcdbb','#41b6c4','#2c7fb8','#253494']
-# COLOURS = ['#66c2a5','#fc8d62','#8da0cb','#e78ac3','#a6d854','#ffd92f']
+
+
+
+# Region selection
+REGION = 'NL01'
+# REGION = 'SK00'
+# REGION = 'SE02' 
+# REGION = 'FR10'
+
 
 #%%
 # =============================================================================
@@ -63,7 +70,6 @@ colour_wind_hrw = 'dodgerblue' # 0.7
 FOLDER_drive='/Users/3986209/Library/CloudStorage/OneDrive-UniversiteitUtrecht/'
 FOLDER_project=FOLDER_drive+'Projects/ccmetrics/'
 FOLDER_pecd = FOLDER_drive+'Data/PECD/HIST/ENER/'
-FOLDER_project=FOLDER_drive+'Projects/ccmetrics/'
 
 # file name
 fileName_SPV = 'SPV/PEON/H_ERA5_ECMW_T639_SPV_0000m_Pecd_PEON_S198001010000_E202112312300_CFR_TIM_01h_NA-_noc_org_NA_NA---_NA---_PhM01.csv'
@@ -80,8 +86,8 @@ df_SPV = pd.read_csv(FOLDER_pecd+fileName_SPV, header=52, parse_dates=True, inde
 df_WON = pd.read_csv(FOLDER_pecd+fileName_WON, header=52, parse_dates=True, index_col='Date')
 df_SPV.index = df_SPV.index.rename('time')
 df_WON.index = df_WON.index.rename('time')
-ds_SPV = df_SPV.NL01.to_xarray()
-ds_WON = df_WON.NL01.to_xarray()
+ds_SPV = df_SPV[REGION].to_xarray()
+ds_WON = df_WON[REGION].to_xarray()
 
 
 #%%
@@ -99,9 +105,12 @@ ds_WON = ds_WON.sel(time=~((ds_WON.time.dt.month == 2) & (ds_WON.time.dt.day == 
 # =============================================================================
 
 # Open climatology from disk
-ds_ClimSPV = xr.open_dataset(FOLDER_project+'data/processed/ERA5_SPV_clim-anom_PECD_PEON_hrwCLIM40.nc')
-ds_ClimWON = xr.open_dataset(FOLDER_project+'data/processed/ERA5_WON_clim-anom_PECD_PEON_hrwCLIM40.nc')
-
+if REGION =='NL01':
+    ds_ClimSPV = xr.open_dataset(FOLDER_project+'data/processed/ERA5_SPV_clim-anom_PECD_PEON_hrwCLIM40_additionalYear.nc')
+    ds_ClimWON = xr.open_dataset(FOLDER_project+'data/processed/ERA5_WON_clim-anom_PECD_PEON_hrwCLIM40_additionalYear.nc')
+else:
+    ds_ClimSPV = xr.open_dataset(FOLDER_project+'data/temp/ERA5_SPV_clim-anom_PECD_PEON_hrwCLIM40_additionalYear_'+REGION+'.nc')
+    ds_ClimWON = xr.open_dataset(FOLDER_project+'data/temp/ERA5_WON_clim-anom_PECD_PEON_hrwCLIM40_additionalYear_'+REGION+'.nc')
 
 #%%
 # =============================================================================
@@ -130,7 +139,7 @@ for year in np.arange(start=1991,stop=2021):
     axes['c)'].plot(year_dates[13:8760:24], ds_SPV.sel(time=slice(str(year)+'-01-01', str(year)+'-12-31'))[13:8760:24], color=colour_solar, alpha=0.03)
 
 # show the hourly clim with all the years, only 13:00 for solar 
-axes['a)'].plot(year_dates, ds_ClimWON.Hourly, color=colour_wind_clim, alpha=0.7)
+axes['a)'].plot(year_dates, ds_ClimWON.Hourly[0:8760], color=colour_wind_clim, alpha=0.7)
 axes['c)'].plot(year_dates[13:8760:24], ds_ClimSPV.Hourly[13:8760:24], color=colour_solar_clim, alpha=0.7)
   
 axes['a)'].plot(year_dates[13:8760:24], ds_ClimWON.HRW40[13:8760:24], color=colour_wind_hrw, alpha=1)
@@ -200,7 +209,11 @@ for label, ax in axes.items():
     ax.text(0.0, 1.0, label, transform=ax.transAxes + trans,
             fontsize='xx-large', verticalalignment='top')
 
-plt.savefig(FOLDER_project+'results/publication/Climatology_v2.png')
-plt.savefig(FOLDER_project+'results/publication/Climatology_v2.pdf')
-
+if REGION == 'NL01':
+    plt.savefig(FOLDER_project+'results/publication/Climatology_v2.png')
+    plt.savefig(FOLDER_project+'results/publication/Climatology_v2.pdf')
+else:
+    plt.savefig(FOLDER_project+'results/additional_regions/Climatology_v2_'+REGION+'.png')
+    plt.savefig(FOLDER_project+'results/additional_regions/Climatology_v2_'+REGION+'.pdf')
+    
 plt.show()

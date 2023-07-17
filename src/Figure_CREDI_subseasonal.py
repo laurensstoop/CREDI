@@ -4,7 +4,7 @@ Spyder Editor
 
 Created on 2023-06-19
 
-Updated on 2023-06-26
+Updated on 2023-07-17
 
 @author: Laurens P. Stoop
 """
@@ -66,6 +66,12 @@ EVENTS_topk = 1800
 SEASON_start_WON = 5
 
 
+# Region selection
+REGION = 'NL01'
+# REGION = 'SK00'
+# REGION = 'SE02' 
+# REGION = 'FR10'
+
 
 #%%
 # =============================================================================
@@ -77,10 +83,13 @@ FOLDER_project='/Users/3986209/Library/CloudStorage/OneDrive-UniversiteitUtrecht
 
 
 ## Retrieve from disk
-# Solar
-ds_SPVanom = xr.open_dataset(FOLDER_project+'data/processed/ERA5_SPV_clim-anom_PECD_PEON_hrwCLIM40_additionalYear.nc')
-# Wind
-ds_WONanom = xr.open_dataset(FOLDER_project+'data/processed/ERA5_WON_clim-anom_PECD_PEON_hrwCLIM40_additionalYear.nc')
+# Open climatology from disk
+if REGION =='NL01':
+    ds_SPVanom = xr.open_dataset(FOLDER_project+'data/processed/ERA5_SPV_clim-anom_PECD_PEON_hrwCLIM40_additionalYear.nc')
+    ds_WONanom = xr.open_dataset(FOLDER_project+'data/processed/ERA5_WON_clim-anom_PECD_PEON_hrwCLIM40_additionalYear.nc')
+else:
+    ds_SPVanom = xr.open_dataset(FOLDER_project+'data/temp/ERA5_SPV_clim-anom_PECD_PEON_hrwCLIM40_additionalYear_'+REGION+'.nc')
+    ds_WONanom = xr.open_dataset(FOLDER_project+'data/temp/ERA5_WON_clim-anom_PECD_PEON_hrwCLIM40_additionalYear_'+REGION+'.nc')
 
 
 
@@ -111,37 +120,8 @@ ds['CREDI_won'] = ds.WONanom_event.cumsum(dim='event_hour')
 
 #%% 
 # =============================================================================
-# A few quick figures
-# =============================================================================
-
-
-
-
-#%% Lineplot for each timestep (slow: ~15 seconds total)
-
-
-# Solar
-ds.CREDI_spv.plot.line(x='event_hour', add_legend=False)
-plt.show()
-# Wind
-ds.CREDI_won.plot.line(x='event_hour', add_legend=False)
-plt.show()
-
-
-
-
-
-
-#%% event filter ideas 
-# =============================================================================
 # Event filtering method
 # =============================================================================
-
-
-## return index of max value
-# Not used, but can be handy
-ds.cumsum(dim='event_hour').sel(event_hour=PERIOD_length-1).idxmax()
-
 
 
 ## Generate event list for highest/lowest events 
@@ -163,10 +143,6 @@ df_sort_WON = df.nsmallest(len(df), 'WON_event_credi', keep='all')
 
 ## Filter the full dataset to only get the top-k events
 ## dropp all less then 5 days away 
-# not used, but shows example
-df_sort_SPV.drop(df_sort_SPV.loc[(abs(df_sort_SPV.index - df_sort_SPV.index[0]) < timedelta(5))].index)
-
-# Make event list
 # Solar
 SPV_event_date = []
 SPV_event_value = []
@@ -209,50 +185,8 @@ df_save['WON_event_date']= pd.DataFrame(WON_event_date)
 df_save['WON_event_value']= pd.DataFrame(WON_event_value)
 
 # Store to disk
-df_save.to_csv(FOLDER_project+'data/processed/ERA5_CREDI_'+str(int((PERIOD_length-1)/24))+'days_PECDv4.0_PEON_hrwCLIM40_additionalYear.csv', sep=';', decimal=',', header='true', date_format='%Y-%m-%d')
-
-
-
-
-#%%
-# =============================================================================
-# Figures
-# =============================================================================
-
-# Coincidence of CREDI extremes
-df.plot.scatter(x='WON_event_credi', y='SPV_event_credi')
-plt.show()
-
-# Coincidence
-for i in range(10):
-    ds.sel(time=WON_event_date[i]).SPVanom_event.cumsum().plot(label=str(WON_event_date[i].year)+' Rank:'+str(i))
-ds.sel(time=WON_event_date[8]).SPVanom_event.cumsum().plot(c='black', label=str(WON_event_date[8].year)+' Rank:'+str(8))
-plt.legend(loc='upper left', fontsize='small')
-plt.show()
-
-
-
-
-
-#%%
-
-# time-series van anom tijdens event
-ds.sel(time=WON_event_date[0]).WONanom_event.plot()
-plt.show()
-
-
-# CREDI tijdens event
-ds.sel(time=WON_event_date[0]).WONanom_event.cumsum().plot()
-plt.show()
-
-
-# WON tijdens event
-ds.sel(time=WON_event_date[0]).WON_event.plot()
-plt.show()
-
-# for a histogram of the dates
-# https://stackoverflow.com/questions/27365467/can-pandas-plot-a-histogram-of-dates
-
+if REGION =='NL01':
+    df_save.to_csv(FOLDER_project+'data/processed/ERA5_CREDI_'+str(int((PERIOD_length-1)/24))+'days_PECDv4.0_PEON_hrwCLIM40_additionalYear.csv', sep=';', decimal=',', header='true', date_format='%Y-%m-%d')
 
 
 
@@ -406,8 +340,12 @@ for label, ax in axes.items():
     ax.text(0.0, 1.0, label, transform=ax.transAxes + trans,
             fontsize='xx-large', verticalalignment='top')
 
-plt.savefig(FOLDER_project+'results/publication/WindCREDI_shortterm.png')
-plt.savefig(FOLDER_project+'results/publication/WindCREDI_shortterm.pdf')
+if REGION == 'NL01':
+    plt.savefig(FOLDER_project+'results/publication/WindCREDI_shortterm.png')
+    plt.savefig(FOLDER_project+'results/publication/WindCREDI_shortterm.pdf')
+else:
+    plt.savefig(FOLDER_project+'results/additional_regions/WindCREDI_shortterm_'+REGION+'.png')
+    plt.savefig(FOLDER_project+'results/additional_regions/WindCREDI_shortterm_'+REGION+'.pdf')
 
 plt.show()
 
@@ -569,8 +507,12 @@ for label, ax in axes.items():
     ax.text(0.0, 1.0, label, transform=ax.transAxes + trans,
             fontsize='xx-large', verticalalignment='top')
 
-plt.savefig(FOLDER_project+'results/publication/supplementary/WindCREDI_shortterm_behaviour.png')
-plt.savefig(FOLDER_project+'results/publication/supplementary/WindCREDI_shortterm_behaviour.pdf')
+
+if REGION == 'NL01':
+    plt.savefig(FOLDER_project+'results/publication/WindCREDI_shortterm_behaviour.png')
+    plt.savefig(FOLDER_project+'results/publication/WindCREDI_shortterm_behaviour.pdf')
+
+
 
 plt.show()
 
@@ -586,16 +528,6 @@ fig, axes = plt.subplot_mosaic([['a)']], figsize=(10,7))
 
 
 ### First plot the initial yearly energy balance index and additional lines 
-
-
-# Coincidence of CREDI extremes
-# Show the data for all the years
-# df.plot.scatter(
-#     x='WON_event_credi', 
-#     y='SPV_event_credi', 
-#     ax=axes['a)'],
-#     color='dodgerblue', 
-#     alpha=1)
 
 # look at WON events
 for date_of_events in WON_event_date[0:50]:
@@ -697,9 +629,13 @@ axes['a)'].set_ylabel('Solar CREDI [FLH]')
 # make it look better
 plt.tight_layout()
 
-
-plt.savefig(FOLDER_project+'results/publication/supplementary/WindCREDI_shortterm_scatter_top50.png')
-plt.savefig(FOLDER_project+'results/publication/supplementary/WindCREDI_shortterm_scatter_top50.pdf')
+if REGION == 'NL01':
+    plt.savefig(FOLDER_project+'results/supplementary/WindCREDI_shortterm_scatter_top50.png')
+    plt.savefig(FOLDER_project+'results/supplementary/WindCREDI_shortterm_scatter_top50.pdf')
+else:
+    
+    plt.savefig(FOLDER_project+'results/additional_regions/WindCREDI_shortterm_scatter_top50_'+REGION+'.png')
+    plt.savefig(FOLDER_project+'results/additional_regions/WindCREDI_shortterm_scatter_top50_'+REGION+'.pdf')
 
 plt.show()
 
@@ -715,16 +651,6 @@ fig, axes = plt.subplot_mosaic([['a)']], figsize=(10,7))
 
 
 ### First plot the initial yearly energy balance index and additional lines 
-
-
-# Coincidence of CREDI extremes
-# Show the data for all the years
-# df.plot.scatter(
-#     x='WON_event_credi', 
-#     y='SPV_event_credi', 
-#     ax=axes['a)'],
-#     color='dodgerblue', 
-#     alpha=1)
 
 
 # look at SPV events
@@ -834,11 +760,14 @@ axes['a)'].set_ylabel('Solar CREDI [FLH]')
 plt.tight_layout()
 
 
-plt.savefig(FOLDER_project+'results/publication/supplementary/WindCREDI_shortterm_scatter.png')
-plt.savefig(FOLDER_project+'results/publication/supplementary/WindCREDI_shortterm_scatter.pdf')
+if REGION == 'NL01':
+    plt.savefig(FOLDER_project+'results/supplementary/WindCREDI_shortterm_scatter.png')
+    plt.savefig(FOLDER_project+'results/supplementary/WindCREDI_shortterm_scatter.pdf')
+else:
+    plt.savefig(FOLDER_project+'results/additional_regions/WindCREDI_shortterm_scatter_'+REGION+'.png')
+    plt.savefig(FOLDER_project+'results/additional_regions/WindCREDI_shortterm_scatter_'+REGION+'.pdf')
 
 plt.show()
-#%%
 
 #%% Historgram of probability
 # Solar
@@ -860,6 +789,11 @@ axes['a)'].set_ylabel('Count')
 axes['b)'].set_xlabel('Wind CREDI [FLH]')
 plt.tight_layout()
 
-plt.savefig(FOLDER_project+'results/publication/supplementary/CREDI_shortterm_histogram.png')
-plt.savefig(FOLDER_project+'results/publication/supplementary/CREDI_shortterm_histogram.pdf')
+if REGION == 'NL01':
+    plt.savefig(FOLDER_project+'results/supplementary/CREDI_shortterm_histogram.png')
+    plt.savefig(FOLDER_project+'results/supplementary/CREDI_shortterm_histogram.pdf')
+else:
+    plt.savefig(FOLDER_project+'results/additional_regions/CREDI_shortterm_histogram_'+REGION+'.png')
+    plt.savefig(FOLDER_project+'results/additional_regions/CREDI_shortterm_histogram_'+REGION+'.pdf')
+
 plt.show()

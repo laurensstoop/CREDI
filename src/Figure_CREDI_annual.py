@@ -4,7 +4,7 @@ Spyder Editor
 
 Created on 2023-03-30
 
-Updated on 2023-06-26
+Updated on 2023-07-17
 
 @author: Laurens P. Stoop
 """
@@ -44,8 +44,12 @@ colour_wind_clim = 'grey' # 1
 colour_wind_hrw = 'dodgerblue' # 0.7
 colour_wind_credi = 'steelblue'
 
-# COLOURS = ['#ffffcc','#c7e9b4','#7fcdbb','#41b6c4','#2c7fb8','#253494']
-# COLOURS = ['#66c2a5','#fc8d62','#8da0cb','#e78ac3','#a6d854','#ffd92f']
+# Region selection
+REGION = 'NL01'
+# REGION = 'SK00'
+# REGION = 'SE02' 
+# REGION = 'FR10'
+
 
 #%%
 # =============================================================================
@@ -60,10 +64,14 @@ FOLDER_project='/Users/3986209/Library/CloudStorage/OneDrive-UniversiteitUtrecht
 # Get the data to open
 # =============================================================================
 
+# Open climatology from disk
+if REGION =='NL01':
+    ds_SPVanom = xr.open_dataset(FOLDER_project+'data/processed/ERA5_SPV_clim-anom_PECD_PEON_hrwCLIM40_additionalYear.nc')
+    ds_WONanom = xr.open_dataset(FOLDER_project+'data/processed/ERA5_WON_clim-anom_PECD_PEON_hrwCLIM40_additionalYear.nc')
+else:
+    ds_SPVanom = xr.open_dataset(FOLDER_project+'data/temp/ERA5_SPV_clim-anom_PECD_PEON_hrwCLIM40_additionalYear_'+REGION+'.nc')
+    ds_WONanom = xr.open_dataset(FOLDER_project+'data/temp/ERA5_WON_clim-anom_PECD_PEON_hrwCLIM40_additionalYear_'+REGION+'.nc')
 
-# Store to disk
-ds_SPVanom = xr.open_dataset(FOLDER_project+'data/processed/ERA5_SPV_clim-anom_PECD_PEON_hrwCLIM40_additionalYear.nc')
-ds_WONanom = xr.open_dataset(FOLDER_project+'data/processed/ERA5_WON_clim-anom_PECD_PEON_hrwCLIM40_additionalYear.nc')
 
 
 #%% WIND
@@ -177,8 +185,8 @@ axes['b)'].legend(loc='lower left', fontsize='medium')
 
 
 
-axes['a)'].set_ylim(-410,410)
-axes['b)'].set_ylim(-410,410)
+# axes['a)'].set_ylim(-410,410)
+# axes['b)'].set_ylim(-410,410)
 
 # # Fix labels
 axes['a)'].set_ylabel('Wind CREDI [FLH]')
@@ -196,9 +204,13 @@ for label, ax in axes.items():
     ax.text(0.0, 1.0, label, transform=ax.transAxes + trans,
             fontsize='xx-large', verticalalignment='top')
 
-plt.savefig(FOLDER_project+'results/publication/WindCREDI_annual.png')
-plt.savefig(FOLDER_project+'results/publication/WindCREDI_annual.pdf')
-
+if REGION == 'NL01':
+    plt.savefig(FOLDER_project+'results/publication/WindCREDI_annual.png')
+    plt.savefig(FOLDER_project+'results/publication/WindCREDI_annual.pdf')
+else:
+    plt.savefig(FOLDER_project+'results/additional_regions/WindCREDI_annual_'+REGION+'.png')
+    plt.savefig(FOLDER_project+'results/additional_regions/WindCREDI_annual_'+REGION+'.pdf')
+    
 plt.show()
 
 
@@ -314,8 +326,8 @@ axes['b)'].legend(loc='lower left', fontsize='medium')
 
 
 
-axes['a)'].set_ylim(-110,110)
-axes['b)'].set_ylim(-110,110)
+# axes['a)'].set_ylim(-110,110)
+# axes['b)'].set_ylim(-110,110)
 
 # # Fix labels
 axes['a)'].set_ylabel('Solar CREDI [FLH]')
@@ -332,8 +344,15 @@ for label, ax in axes.items():
     ax.text(0.0, 1.0, label, transform=ax.transAxes + trans,
             fontsize='xx-large', verticalalignment='top')
 
-plt.savefig(FOLDER_project+'results/publication/SolarCREDI_annual.png')
-plt.savefig(FOLDER_project+'results/publication/SolarCREDI_annual.pdf')
+
+
+if REGION == 'NL01':
+    plt.savefig(FOLDER_project+'results/publication/SolarCREDI_annual.png')
+    plt.savefig(FOLDER_project+'results/publication/SolarCREDI_annual.pdf')
+else:
+    plt.savefig(FOLDER_project+'results/additional_regions/SolarCREDI_annual_'+REGION+'.png')
+    plt.savefig(FOLDER_project+'results/additional_regions/SolarCREDI_annual_'+REGION+'.pdf')
+    
 
 plt.show()
 

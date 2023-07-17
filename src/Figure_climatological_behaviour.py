@@ -4,7 +4,7 @@ Spyder Editor
 
 Created on 2023-03-30
 
-Updated on 2023-06-11
+Updated on 2023-07-17
 
 @author: Laurens P. Stoop
 """
@@ -22,7 +22,6 @@ import matplotlib.transforms as mtransforms
 
 # The scripts
 sys.path.append('/Users/3986209/Library/CloudStorage/OneDrive-UniversiteitUtrecht/Projects/ccmetrics/src/')
-import CREBfunctions as creb
 
 
 #%% 
@@ -50,8 +49,14 @@ colour_wind_clim = 'lightsteelblue' # 1
 colour_wind_hrw = 'dodgerblue' # 0.7
 
 
-# COLOURS = ['#ffffcc','#c7e9b4','#7fcdbb','#41b6c4','#2c7fb8','#253494']
-# COLOURS = ['#66c2a5','#fc8d62','#8da0cb','#e78ac3','#a6d854','#ffd92f']
+
+
+# Region selection
+REGION = 'NL01'
+# REGION = 'SK00'
+# REGION = 'SE02' 
+# REGION = 'FR10'
+
 
 #%%
 # =============================================================================
@@ -79,8 +84,8 @@ df_WON = pd.read_csv(FOLDER_pecd+fileName_WON, header=52, parse_dates=True, inde
 df_SPV.index = df_SPV.index.rename('time')
 df_WON.index = df_WON.index.rename('time')
 
-ds_SPV = df_SPV.NL01.to_xarray()
-ds_WON = df_WON.NL01.to_xarray()
+ds_SPV = df_SPV[REGION].to_xarray()
+ds_WON = df_WON[REGION].to_xarray()
 
 
 #%%
@@ -130,9 +135,9 @@ ds_SPV.sel(time=slice("2003-04-03", "2003-04-10")).plot(ax=axes['f)'], alpha=1, 
 axes['a)'].set_ylim(0,0.92)
 axes['b)'].set_ylim(0,0.92)
 axes['c)'].set_ylim(0,0.92)
-axes['d)'].set_ylim(0,0.75)
-axes['e)'].set_ylim(0,0.75)
-axes['f)'].set_ylim(0,0.75)
+axes['d)'].set_ylim(0,0.8)
+axes['e)'].set_ylim(0,0.8)
+axes['f)'].set_ylim(0,0.8)
 
 
 ## formate the date-axis 
@@ -181,7 +186,11 @@ for label, ax in axes.items():
     ax.text(0.0, 1.0, label, transform=ax.transAxes + trans,
             fontsize='xx-large', verticalalignment='top')
 
-plt.savefig(FOLDER_project+'results/publication/Climatological_Behaviour.png')
-plt.savefig(FOLDER_project+'results/publication/Climatological_Behaviour.pdf')
 
+if REGION == 'NLO1':
+    plt.savefig(FOLDER_project+'results/publication/Climatological_Behaviour.png')
+    plt.savefig(FOLDER_project+'results/publication/Climatological_Behaviour.pdf')
+else:
+    plt.savefig(FOLDER_project+'results/additional_regions/Climatological_Behaviour_'+REGION+'.png')
+    plt.savefig(FOLDER_project+'results/additional_regions/Climatological_Behaviour_'+REGION+'.pdf')
 plt.show()

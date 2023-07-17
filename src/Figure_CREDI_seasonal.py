@@ -4,7 +4,7 @@ Spyder Editor
 
 Created on 2023-03-30
 
-Updated on 2023-06-19
+Updated on 2023-07-17
 
 @author: Laurens P. Stoop
 """
@@ -44,8 +44,12 @@ colour_wind_clim = 'grey' # 1
 colour_wind_hrw = 'dodgerblue' # 0.7
 colour_wind_credi = 'steelblue'
 
-# COLOURS = ['#ffffcc','#c7e9b4','#7fcdbb','#41b6c4','#2c7fb8','#253494']
-# COLOURS = ['#66c2a5','#fc8d62','#8da0cb','#e78ac3','#a6d854','#ffd92f']
+
+# Region selection
+REGION = 'NL01'
+# REGION = 'SK00'
+# REGION = 'SE02' 
+# REGION = 'FR10'
 
 #%%
 # =============================================================================
@@ -61,9 +65,14 @@ FOLDER_project='/Users/3986209/Library/CloudStorage/OneDrive-UniversiteitUtrecht
 # =============================================================================
 
 
-# Store to disk
-ds_SPVanom = xr.open_dataset(FOLDER_project+'data/processed/ERA5_SPV_clim-anom_PECD_PEON_hrwCLIM40_additionalYear.nc')
-ds_WONanom = xr.open_dataset(FOLDER_project+'data/processed/ERA5_WON_clim-anom_PECD_PEON_hrwCLIM40_additionalYear.nc')
+# Open climatology from disk
+if REGION =='NL01':
+    ds_SPVanom = xr.open_dataset(FOLDER_project+'data/processed/ERA5_SPV_clim-anom_PECD_PEON_hrwCLIM40_additionalYear.nc')
+    ds_WONanom = xr.open_dataset(FOLDER_project+'data/processed/ERA5_WON_clim-anom_PECD_PEON_hrwCLIM40_additionalYear.nc')
+else:
+    ds_SPVanom = xr.open_dataset(FOLDER_project+'data/temp/ERA5_SPV_clim-anom_PECD_PEON_hrwCLIM40_additionalYear_'+REGION+'.nc')
+    ds_WONanom = xr.open_dataset(FOLDER_project+'data/temp/ERA5_WON_clim-anom_PECD_PEON_hrwCLIM40_additionalYear_'+REGION+'.nc')
+
 
 
 #%% WIND
@@ -171,9 +180,9 @@ axes['a)'].legend(loc='lower left', fontsize='medium')
 axes['b)'].legend(loc='lower left', fontsize='medium')
 
 
-
-axes['a)'].set_ylim(-410,410)
-axes['b)'].set_ylim(-410,410)
+if REGION == 'NL01':
+    axes['a)'].set_ylim(-410,410)
+    axes['b)'].set_ylim(-410,410)
 
 # # Fix labels
 axes['a)'].set_ylabel('Wind CREDI [FLH]')
@@ -192,8 +201,12 @@ for label, ax in axes.items():
     ax.text(0.0, 1.0, label, transform=ax.transAxes + trans,
             fontsize='xx-large', verticalalignment='top')
 
-plt.savefig(FOLDER_project+'results/publication/WindCREDI_seasonal-winter.png')
-plt.savefig(FOLDER_project+'results/publication/WindCREDI_seasonal-winter.pdf')
+if REGION == 'NL01':
+    plt.savefig(FOLDER_project+'results/publication/WindCREDI_seasonal-winter.png')
+    plt.savefig(FOLDER_project+'results/publication/WindCREDI_seasonal-winter.pdf')
+else:
+    plt.savefig(FOLDER_project+'results/additional_regions/WindCREDI_seasonal-winter_'+REGION+'.png')
+    plt.savefig(FOLDER_project+'results/additional_regions/WindCREDI_seasonal-winter_'+REGION+'.pdf')
 
 plt.show()
 
@@ -303,9 +316,9 @@ axes['a)'].legend(loc='lower left', fontsize='medium')
 axes['b)'].legend(loc='lower left', fontsize='medium')
 
 
-
-axes['a)'].set_ylim(-160,160)
-axes['b)'].set_ylim(-160,160)
+if REGION == 'NL01':
+    axes['a)'].set_ylim(-160,160)
+    axes['b)'].set_ylim(-160,160)
 
 # # Fix labels
 axes['a)'].set_ylabel('Wind CREDI [FLH]')
@@ -324,8 +337,13 @@ for label, ax in axes.items():
     ax.text(0.0, 1.0, label, transform=ax.transAxes + trans,
             fontsize='xx-large', verticalalignment='top')
 
-plt.savefig(FOLDER_project+'results/publication/WindCREDI_seasonal-summer.png')
-plt.savefig(FOLDER_project+'results/publication/WindCREDI_seasonal-summer.pdf')
+
+if REGION == 'NL01':
+    plt.savefig(FOLDER_project+'results/publication/WindCREDI_seasonal-summer.png')
+    plt.savefig(FOLDER_project+'results/publication/WindCREDI_seasonal-summer.pdf')
+else:
+    plt.savefig(FOLDER_project+'results/additional_regions/WindCREDI_seasonal-summer_'+REGION+'.png')
+    plt.savefig(FOLDER_project+'results/additional_regions/WindCREDI_seasonal-summer_'+REGION+'.pdf')
 
 plt.show()
 
@@ -435,10 +453,10 @@ for a in ['a)', 'b)']:
 axes['a)'].legend(loc='lower left', fontsize='medium')
 axes['b)'].legend(loc='lower left', fontsize='medium')
 
-
-LIMITER = 90
-axes['a)'].set_ylim(- LIMITER,LIMITER)
-axes['b)'].set_ylim(- LIMITER,LIMITER)
+if REGION == 'NL01':
+    LIMITER = 90
+    axes['a)'].set_ylim(- LIMITER,LIMITER)
+    axes['b)'].set_ylim(- LIMITER,LIMITER)
 
 # # Fix labels
 axes['a)'].set_ylabel('Solar CREDI [FLH]')
@@ -457,8 +475,14 @@ for label, ax in axes.items():
     ax.text(0.0, 1.0, label, transform=ax.transAxes + trans,
             fontsize='xx-large', verticalalignment='top')
 
-plt.savefig(FOLDER_project+'results/publication/SolarCREDI_seasonal-summer.png')
-plt.savefig(FOLDER_project+'results/publication/SolarCREDI_seasonal-summer.pdf')
+
+if REGION == 'NL01':
+    plt.savefig(FOLDER_project+'results/publication/SolarCREDI_seasonal-summer.png')
+    plt.savefig(FOLDER_project+'results/publication/SolarCREDI_seasonal-summer.pdf')
+else:
+    plt.savefig(FOLDER_project+'results/additional_regions/SolarCREDI_seasonal-summer_'+REGION+'.png')
+    plt.savefig(FOLDER_project+'results/additional_regions/SolarCREDI_seasonal-summer_'+REGION+'.pdf')
+
 
 plt.show()
 
@@ -566,10 +590,10 @@ for a in ['a)', 'b)']:
 axes['a)'].legend(loc='lower left', fontsize='medium')
 axes['b)'].legend(loc='lower left', fontsize='medium')
 
-
-LIMITER = 30
-axes['a)'].set_ylim(- LIMITER,LIMITER)
-axes['b)'].set_ylim(- LIMITER,LIMITER)
+if REGION == 'NL01':
+    LIMITER = 30
+    axes['a)'].set_ylim(- LIMITER,LIMITER)
+    axes['b)'].set_ylim(- LIMITER,LIMITER)
 
 # # Fix labels
 axes['a)'].set_ylabel('Solar CREDI [FLH]')
@@ -588,8 +612,15 @@ for label, ax in axes.items():
     ax.text(0.0, 1.0, label, transform=ax.transAxes + trans,
             fontsize='xx-large', verticalalignment='top')
 
-plt.savefig(FOLDER_project+'results/publication/SolarCREDI_seasonal-winter.png')
-plt.savefig(FOLDER_project+'results/publication/SolarCREDI_seasonal-winter.pdf')
+
+if REGION == 'NL01':
+    plt.savefig(FOLDER_project+'results/publication/SolarCREDI_seasonal-winter.png')
+    plt.savefig(FOLDER_project+'results/publication/SolarCREDI_seasonal-winter.pdf')
+else:
+    plt.savefig(FOLDER_project+'results/additional_regions/SolarCREDI_seasonal-winter_'+REGION+'.png')
+    plt.savefig(FOLDER_project+'results/additional_regions/SolarCREDI_seasonal-winter_'+REGION+'.pdf')
+
+
 
 plt.show()
 

@@ -24,6 +24,9 @@ import CREDIfunctions as credi
 
 
 REGION = 'NL01'
+# REGION = 'SK00'
+# REGION = 'SE02'
+# REGION = 'FR10'
 
 #%%
 # =============================================================================
@@ -123,7 +126,24 @@ ds_WON_save['WON'] = ds_WON.NL01
 # =============================================================================
 
 # Store to disk
-ds_SPV_save.to_netcdf(FOLDER_project+'data/processed/ERA5_SPV_clim-anom_PECD_PEON_hrwCLIM40_additionalYear.nc')
-ds_WON_save.to_netcdf(FOLDER_project+'data/processed/ERA5_WON_clim-anom_PECD_PEON_hrwCLIM40_additionalYear.nc')
-
+if REGION == 'NL01':
+    ds_SPV_save.to_netcdf(FOLDER_project+'data/processed/ERA5_SPV_clim-anom_PECD_PEON_hrwCLIM40_additionalYear.nc')
+    ds_WON_save.to_netcdf(FOLDER_project+'data/processed/ERA5_WON_clim-anom_PECD_PEON_hrwCLIM40_additionalYear.nc')
+else: 
+    ds_SPV_save.to_netcdf(FOLDER_project+'data/temp/ERA5_SPV_clim-anom_PECD_PEON_hrwCLIM40_additionalYear_'+REGION+'.nc')
+    ds_WON_save.to_netcdf(FOLDER_project+'data/temp/ERA5_WON_clim-anom_PECD_PEON_hrwCLIM40_additionalYear_'+REGION+'.nc')
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 

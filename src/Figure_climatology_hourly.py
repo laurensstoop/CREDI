@@ -228,8 +228,8 @@ for a, b in [[3,0], [3,1], [3,2], [3,3], [3,4], [3,5]]:
 # make it look better
 plt.tight_layout()
 
-plt.savefig(FOLDER_project+'results/publication/Climatology_solar_hourly.png')
-plt.savefig(FOLDER_project+'results/publication/Climatology_solar_hourly.pdf')
+plt.savefig(FOLDER_project+'results/supplementary/Climatology_solar_hourly.png')
+plt.savefig(FOLDER_project+'results/supplementary/Climatology_solar_hourly.pdf')
 
 plt.show()
 
@@ -365,8 +365,8 @@ for a, b in [[3,0], [3,1], [3,2], [3,3], [3,4], [3,5]]:
 # make it look better
 plt.tight_layout()
 
-plt.savefig(FOLDER_project+'results/publication/Climatology_wind_hourly.png')
-plt.savefig(FOLDER_project+'results/publication/Climatology_wind_hourly.pdf')
+plt.savefig(FOLDER_project+'results/supplementary/Climatology_wind_hourly.png')
+plt.savefig(FOLDER_project+'results/supplementary/Climatology_wind_hourly.pdf')
 
 plt.show()
 
