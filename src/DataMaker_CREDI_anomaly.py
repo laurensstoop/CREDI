@@ -20,7 +20,7 @@ from datetime import datetime
 
 # The scripts
 sys.path.append('/Users/3986209/Library/CloudStorage/OneDrive-UniversiteitUtrecht/Projects/ccmetrics/src/')
-import CREBfunctions as creb
+import CREDIfunctions as credi
 
 
 REGION = 'NL01'
@@ -78,12 +78,12 @@ ds_ClimWON = xr.Dataset()
 
 
 # determine climatology for solar
-ds_ClimSPV['Hourly'], OH = creb.Climatology_Hourly(ds_SPV, REGION)
-ds_ClimSPV['HRW40'], OH = creb.Climatology_Hourly_Rolling(ds_SPV, REGION, RollingWindow=40)
+ds_ClimSPV['Hourly'], OH = credi.Climatology_Hourly(ds_SPV, REGION)
+ds_ClimSPV['HRW40'], OH = credi.Climatology_Hourly_Rolling(ds_SPV, REGION, RollingWindow=40)
 
 # determine climatology for wind
-ds_ClimWON['Hourly'], OH = creb.Climatology_Hourly(ds_WON, REGION)
-ds_ClimWON['HRW40'], OH = creb.Climatology_Hourly_Rolling(ds_WON, REGION, RollingWindow=40)
+ds_ClimWON['Hourly'], OH = credi.Climatology_Hourly(ds_WON, REGION)
+ds_ClimWON['HRW40'], OH = credi.Climatology_Hourly_Rolling(ds_WON, REGION, RollingWindow=40)
 
 
 #%%
@@ -97,12 +97,12 @@ ds_SPV_save = xr.Dataset()
 ds_WON_save = xr.Dataset()
 
 # determine HRW anomaly 
-ds_SPV_save['anom'] = ds_SPV[REGION].groupby(creb.Ordinal_Hour(ds_SPV)) - ds_ClimSPV.HRW40
-ds_WON_save['anom'] = ds_WON[REGION].groupby(creb.Ordinal_Hour(ds_WON)) - ds_ClimWON.HRW40
+ds_SPV_save['anom'] = ds_SPV[REGION].groupby(credi.Ordinal_Hour(ds_SPV)) - ds_ClimSPV.HRW40
+ds_WON_save['anom'] = ds_WON[REGION].groupby(credi.Ordinal_Hour(ds_WON)) - ds_ClimWON.HRW40
 
 # determine Hourly anomaly 
-ds_SPV_save['anom_hourly'] = ds_SPV[REGION].groupby(creb.Ordinal_Hour(ds_SPV)) - ds_ClimSPV.Hourly
-ds_WON_save['anom_hourly'] = ds_WON[REGION].groupby(creb.Ordinal_Hour(ds_WON)) - ds_ClimWON.Hourly
+ds_SPV_save['anom_hourly'] = ds_SPV[REGION].groupby(credi.Ordinal_Hour(ds_SPV)) - ds_ClimSPV.Hourly
+ds_WON_save['anom_hourly'] = ds_WON[REGION].groupby(credi.Ordinal_Hour(ds_WON)) - ds_ClimWON.Hourly
 
 # Add the climatologies
 ds_SPV_save['Hourly'] = ds_ClimSPV['Hourly']
