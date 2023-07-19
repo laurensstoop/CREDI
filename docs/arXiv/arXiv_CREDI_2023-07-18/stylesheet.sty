@@ -1,0 +1,165 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%		~~~~ EDITOR'S NOTE ~~~~
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% This is the preprint stylesheet of Laurens P. Stoop in LaTeX
+%
+% This document is inteded to be a guide to a nice and easy preprint
+%			- Comments are used to explain code (% sign)
+%			- Make it your own by selecting only the things you want
+%			- If in possible options you meet a couple of dots (...) more options are available (see documentation of pkg)
+%
+% Comments, remarks and more: email me at laurensstoop@protonmail.com
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%	 	 ~~~~ END OF: EDITOR'S NOTE ~~~~
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\ProvidesPackage{stylesheet}
+
+%%%%%%%%%%%%% general document control %%%%%%%%%%%%%%%%
+
+% load color names
+\usepackage[usenames,dvipsnames]{color} 
+
+% use this for double-spacing
+\usepackage{setspace} 
+
+% use the table option if you want color in tables
+\usepackage[table,xcdraw]{xcolor} 
+
+% Color definition
+\definecolor{Accent}{cmyk}{0.7,0.4,0,0} 
+\definecolor{Highlight}{cmyk}{0.8,1,0,0}
+
+% to tweak the margins locally
+\usepackage{changepage} 
+
+% use this for double-spacing
+\usepackage{setspace} 
+
+% in-line enumerated items
+\usepackage[inline,shortlabels]{enumitem} 
+
+%%%%%%%%%%%%% figures and tables and captions %%%%%%%%%%%%%%%%
+\usepackage{graphicx} 
+\usepackage[margin=10pt,font=small,labelfont=bf,labelsep=colon,justification=raggedright,singlelinecheck=false,format=plain]{caption}
+\DeclareCaptionFont{Highlight}{\color{Highlight}}
+\captionsetup{labelfont={Highlight,bf}}
+
+% \usepackage{grffile} % takes the names of figures out
+\usepackage{pdflscape} % will rotate to landscape where appropriate
+
+
+%%%%%%%%%%%%% fonts %%%%%%%%%%%%%
+% if you want Montserrat
+\usepackage[defaultfam,  light,  tabular,  lining]{montserrat}
+\makeatletter
+\def\bfseries@sf{bold} % if you want a different bold w/montserrat change this
+\makeatother
+
+%%%%%%%%%%%%% spacing %%%%%%%%%%%%%
+\setlength{\parskip}{.75ex plus 0.25ex minus 0.25ex} % slight space b/w paragraphs
+\setlength{\parindent}{1em} % smaller indent of paragraphs
+
+
+%%%%%%%%%%%%% symbols %%%%%%%%%%%%%
+\usepackage{amsmath}
+\usepackage{textcomp} % some control quote sequences and other symbols
+\usepackage{mathtools} % symbols
+\usepackage{mathrsfs} %allows the /mathscr command for in-line math
+\usepackage{gensymb} % nice \degree 
+\usepackage[autostyle]{csquotes} % nice quotes using \enquote{}
+\usepackage[english]{babel} % multilingual hyphenation support
+
+%%%%%%%%%%%%% section / subsection titles %%%%%%%%%%%%%%%%
+\usepackage{titlesec} % change the "sffamily" to "rmfamily" if you switch to serif fonts
+\titleformat{\section}
+  {\sffamily\normalsize\bfseries\color{Highlight}}
+  {\thesection}{1em}
+  {\MakeUppercase}
+  
+\titleformat{\subsection}
+  {\sffamily\normalsize\bfseries\color{Highlight}}
+  {\thesubsection}{1em}{}
+  
+\titleformat{\subsubsection}
+  {\sffamily\small\bfseries\color{Highlight}}
+  {\thesubsection}{1em}{}
+
+\titlespacing*\section{0pt}{*1}{*.5}
+\titlespacing*\subsection{0pt}{*1}{*-.5}
+\titlespacing*\subsubsection{0pt}{*1}{*-.5}
+
+
+%%%%%%%%%%%%% title  %%%%%%%%%%%%%
+\makeatletter
+\renewcommand{\maketitle}{\bgroup\setlength{\parindent}{0pt}
+\thispagestyle{empty}
+\begin{flushleft}
+    \begin{adjustwidth}{0in}{.5in} % a bit more margin for the title
+        \begin{Huge} 
+            \begin{spacing}{.9} 
+            \textbf{\@title}
+            \end{spacing}
+        \end{Huge}
+    \end{adjustwidth}
+    \bigskip
+    \linespread{1}
+    \@author 
+\end{flushleft}\egroup
+}
+\makeatother
+
+\renewenvironment{abstract}{%
+      {\textbf{\color{Highlight}\abstractname} \\[0.5em]}
+      \color{Accent} \sffamily
+      }
+      
+
+%%%%%%%%%%%%% Headers  %%%%%%%%%%%%%
+
+% Headings for all pages apart from first
+%
+\def\ps@headings{\let\@oddfoot\@empty
+      \let\@evenfoot\@empty
+      \def\@evenhead{\thepage\hfil\itshape\rightmark}%
+      \def\@oddhead{{\itshape\leftmark}\hfil\thepage}%
+      \let\@mkboth\markboth
+      \let\sectionmark\@gobble
+      \let\subsectionmark\@gobble}
+      
+
+% Use the headings as defined
+\pagestyle{headings}
+
+%%%%%%%%%%%%%% bibliography %%%%%%%%%%%%%%%%%
+\usepackage[
+    style=nature,
+    natbib=true,
+    % url=false, 
+    doi=true,
+    eprint=true,
+    autocite=superscript,
+    backend=biber]{biblatex}
+    
+% \setlength{\bibsep}{0pt plus 0.2ex}
+
+
+% puts a nice little ORCID symbol in the authors' list
+\usepackage{orcidlink} 
+
+% Colour of hyperlinks
+\hypersetup{colorlinks,citecolor = Highlight, linkcolor = Accent, urlcolor = Accent}
+\usepackage[noabbrev,nameinlink]{cleveref}
+
+%%%%%%%%%%%%%% Deal with supplemental figures / equations by renumbering and starting with "S" %%%%%%%%%%%%%%%%%
+\newcommand{\beginsupplement}{%
+    \setcounter{figure}{0}
+    \renewcommand{\thefigure}{S\arabic{figure}}%
+    \renewcommand{\theequation}{S\arabic{equation}} 
+    \renewcommand{\thetable}{S\arabic{table}} 
+}
+
+
