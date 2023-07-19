@@ -8,7 +8,6 @@ authors:
     orcid: 'https://orcid.org/0000-0003-2756-5653'
 title: 'Scripts for The Climatological Renewable Energy Deviation Index' 
 version: 1.0.0
-###### doi: 10.5281/zenodo.1234
 date-released: 2023-07-18
 references:
   - type: unpublished
