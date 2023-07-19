@@ -1,0 +1,46 @@
+cff-version: 1.2.0
+message: If you use this software, please cite it as below.
+authors:  
+  - given-names: 'Laurens P. '
+    family-names: Stoop
+    email: laurensstoop@pm.me
+    affiliation: Utrecht University
+    orcid: 'https://orcid.org/0000-0003-2756-5653'
+title: 'Scripts for The Climatological Renewable Energy Deviation Index' 
+version: 1.0.0
+date-released: 2023-07-18
+preferred-citation:
+  type: generic
+  authors:
+  - given-names: 'Laurens P. '
+    family-names: Stoop
+    email: laurensstoop@pm.me
+    affiliation: Utrecht University
+    orcid: 'https://orcid.org/0000-0003-2756-5653'
+  - given-names: 'Karin'
+    family-names: 'van der Wiel'
+    affiliation: 'KNMI'
+    orcid: 'https://orcid.org/0000-0001-9365-5759'
+  - given-names: 'William'
+    family-names: 'Zappa'
+    affiliation: 'TenneT TSO B.V.'
+    orcid: 'https://orcid.org/0000-0001-6810-7224'
+  - given-names: 'Arno'
+    family-names: 'Haverkamp'
+    affiliation: 'TenneT TSO B.V.'
+    orcid: 'https://orcid.org/0000-0001-6947-7892'
+  - given-names: 'Ad'
+    family-names: 'Feelders'
+    affiliation: 'Utrecht University'
+    orcid: 'https://orcid.org/0000-0003-4525-1949'
+  - given-names: 'Machteld'
+    family-names: 'van den Broek'
+    affiliation: 'University of Groningen'
+    orcid: 'https://orcid.org/0000-0003-1028-1742'
+  title: "The Climatological Renewable Energy Deviation Index"
+  year: 2023
+  journal: arXiv
+  url: 'https://arxiv.org/abs/2307.08909'
+  eprint: 2307.08909
+  archivePrefix: 'arXiv'
+  primaryClass: 'physics.ao-ph'
