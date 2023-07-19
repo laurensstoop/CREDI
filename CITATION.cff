@@ -11,7 +11,7 @@ version: 1.0.0
 ###### doi: 10.5281/zenodo.1234
 date-released: 2023-07-18
 references:
-  - type: misc
+  - type: unpublished
     authors:
         - given-names: 'Laurens P. '
           family-names: Stoop
