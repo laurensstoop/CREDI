@@ -1,4 +1,4 @@
-# Metric: The Climatological Renewable Energy Deviation Index
+# Scripts for The Climatological Renewable Energy Deviation Index
 
 Version 1.0.0
 
