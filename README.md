@@ -1,8 +1,8 @@
-# Scripts for The Climatological Renewable Energy Deviation Index
+# Scripts for the Climatological Renewable Energy Deviation Index
 
 Version 1.0.0
 
-A metrics to quantify, understand, and explain, the impact of the variability of weather on the energy system across timescales. If you want to add a feature, please feel free to do so. 
+A set of scripts detailing the Climatological Renewable Energy Deviation Index as describe in [this paper](https://arxiv.org/abs/2307.08909). 
 
 
 ## Project organization
@@ -14,9 +14,6 @@ A metrics to quantify, understand, and explain, the impact of the variability of
 ├── LICENSE.md
 ├── README.md
 ├── requirements.txt
-├── bin                <- Compiled and external code, ignored by git (PG)
-│   └── external       <- Any external source code, ignored by git (RO)
-├── config             <- Configuration files (HW)
 ├── data               <- All project data, ignored by git
 │   ├── processed      <- The final, canonical data sets for modeling. (PG)
 │   ├── raw            <- The original, immutable data dump. (RO)
@@ -38,4 +35,32 @@ This project is licensed under the terms of the [MIT License](/LICENSE.md)
 
 ## Citation
 
-Please [cite the paper accompanying this project as described here](/CITATION.cff).
+If you use CREDI in a scientific publication, we would appreciate citations to the following paper:
+
+[The Climatological Renewable Energy Deviation Index](https://arxiv.org/abs/2307.08909), Stoop, L. P., van der Wiel, K., Zappa, W., Haverkamp, A., Feelders, A., & van den Broek, M. (2023).
+
+Bibtex entry:
+```bibtex
+@misc{stoop2023climatological,
+      title={The Climatological Renewable Energy Deviation Index}, 
+      author={Laurens P. Stoop and Karin van der Wiel and William Zappa and Arno Haverkamp and Ad J. Feelders and Machteld van den Broek},
+      year={2023},
+      eprint={2307.08909},
+      archivePrefix={arXiv},
+      primaryClass={physics.ao-ph}
+}
+```
+
+If you want to cite scripts as provided here, please use:
+
+Scripts for The Climatological Renewable Energy Deviation Index, Stoop, L. P. (2023) https://github.com/laurensstoop/CREDI
+
+Bibtex entry:
+```bibtex
+@misc{stoop2023CREDIscripts,
+      title={Scripts for The Climatological Renewable Energy Deviation Index}, 
+      author={Laurens P. Stoop},
+      year={2023},
+      url={ https://github.com/laurensstoop/CREDI}
+}
+```
