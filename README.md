@@ -1,6 +1,6 @@
 # Scripts for the Climatological Renewable Energy Deviation Index
 
-Version 1.0.0
+Version 1.0.1
 
 A set of scripts detailing the Climatological Renewable Energy Deviation Index as describe in [this paper](https://arxiv.org/abs/2307.08909). 
 
@@ -14,17 +14,18 @@ A set of scripts detailing the Climatological Renewable Energy Deviation Index a
 ├── LICENSE.md
 ├── README.md
 ├── requirements.txt
-├── data               <- All project data, ignored by git
-│   ├── processed      <- The final, canonical data sets for modeling. (PG)
-│   ├── raw            <- The original, immutable data dump. (RO)
-│   └── temp           <- Intermediate data that has been transformed. (PG)
-├── docs               <- Documentation notebook for users (HW)
-│   ├── manuscript     <- Manuscript source, e.g., LaTeX, Markdown, etc. (HW)
-│   └── reports        <- Other project reports and notebooks (e.g. Jupyter, .Rmd) (HW)
+├── data                     <- All project data, ignored by git
+│   ├── processed            <- The final, canonical data sets for modeling.
+│   ├── raw                  <- The original, immutable data dump, ignored by git.
+│   └── temp                 <- Intermediate data that has been transformed, ignored by git.
+├── docs                     <- Documentation notebook for users
+│   └── arXiv                <- Preprint arXiv files, e.g. LaTeX files
 ├── results
-│   ├── figures        <- Figures for the manuscript or reports (PG)
-│   └── output         <- Other output for the manuscript or reports (PG)
-└── src                <- Source code for this project (HW)
+│   ├── publication          <- Figures for the publication
+│   ├── supplementary        <- Supplementary figures for the investigation and publication
+│   ├── additional_regions   <- Base figures generated for other regions
+│   └── figures_development  <- Figures generated in the development phase of the project
+└── src                      <- Scripts and source code for this project 
 
 ```
 
