@@ -9,7 +9,7 @@ authors:
 title: 'Scripts for The Climatological Renewable Energy Deviation Index' 
 version: 1.0.0
 date-released: 2023-07-18
-references:
+preferred-citation:
   - type: unpublished
     authors:
     - given-names: 'Laurens P. '
